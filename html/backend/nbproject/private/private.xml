@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_margen_utilidad.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_transporte_otros_ingresos.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_otros_ingresos_form.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/language/castellano/general_lang.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/libraries/FormularioValidaciones/logica_general/Formulario_logica_general.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_margen_utilidad_lista.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/config/routes.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/models/mfunciones_generales.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_estacionalidad.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_proveedor_lista.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_proveedores.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_pasivos_lista.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_pasivos_form.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/controllers/registros/registros_controller.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_otros_ingresos.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/controllers/api/servicios_app_controller.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/reportes/view_informe_plain.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_fuente_generadora.php</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/models/mfunciones_logica.php</file>
+            <file>file:/C:/xampp/htdocs/fie/html_public/css/estilo_general_registros.css</file>
+            <file>file:/C:/xampp/htdocs/fie/logica_application/views/registros/view_pasivos.php</file>
+        </group>
+    </open-files>
+</project-private>
