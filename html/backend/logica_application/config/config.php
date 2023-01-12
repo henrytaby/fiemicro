@@ -15,6 +15,7 @@
 |
 */
 $config['base_url']	= 'https://onboardingdes.bancofie.com.bo/'; // Siempre terminar con '/'
+$config['base_url']	= 'http://localhost:980/'; // Siempre terminar con '/'
 
 /*
 |--------------------------------------------------------------------------
