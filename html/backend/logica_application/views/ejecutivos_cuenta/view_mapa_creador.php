@@ -1,0 +1,1 @@
+<iframe frameborder="0" scrolling="no" class="mapa_iframe" src="<?php echo (site_url('Test/Mapa/Resultado') . '?codigo_mapa='.$codigo);?>">>    </iframe>
