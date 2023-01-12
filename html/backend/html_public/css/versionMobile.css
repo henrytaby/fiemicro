@@ -1,0 +1,59 @@
+#botonMobileFormulario {
+  display: none;
+}
+@media screen and (min-width: 1px) and (max-width: 600px) {
+  
+  #botonMobileFormulario {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #006699;
+    position: fixed;
+    bottom: 5px;
+    right: 10px;
+    display: block;
+    z-index: 99999;
+    cursor: pointer;
+  }
+  #botonMobileFormulario i{
+    font-size: 25px;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    width: 60px;
+  }
+  .addDragWidth {
+    width: 82% !important;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: 80vh;
+  }
+  .addColor {
+    background: #06254c !important;
+  }
+  .formatearVista {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    width: 100% !important;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    -ms-transition: all 1s ease;
+    transition: all 0.7s ease;
+    -webkit-transform: translate(0, 0);
+    -moz-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+  }
+  .formcomponents {
+    width: 60px;
+  }
+}
