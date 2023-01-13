@@ -1,10 +1,10 @@
 <?php
-    /**
-     * Libreria de Lenguaje para los módulos del sistema
-     * @brief LIBRERIA LENGUAJE
-     * @author Joel Aliaga Duran
-     * @date Nov 2016
-     */   
+/**
+ * Libreria de Lenguaje para los módulos del sistema
+ * @brief LIBRERIA LENGUAJE
+ * @author Joel Aliaga Duran
+ * @date Nov 2016
+ */
 
 $lang["NombreSistema"] = "Initium :: FIE MicroApp <br /> <span style='font-size: 0.6em;'>Seguimiento Efectivo de Información de Clientes </span> ";
 $lang["NombreSistema_corto"] = "Initium :: FIE MicroApp";
@@ -371,7 +371,7 @@ $lang["f_cobis_tracking"] = $lang["f_registro_cobis"] . " - Tracking";
 $lang["flujo_registro_cobis"] = "<i>Flujo de registro COBIS</i>";
 $lang["f_cobis_tracking_pnl_resultado"] = "<div style='text-align: justify;'>El proceso " . $lang["flujo_registro_cobis"] . " está sujeto a validaciones y lógica de reintentos establecidas, por lo que el resultado no necesariamente será inmediato.<br /><br /><i class='fa fa-info-circle' aria-hidden='true'></i> Puede volver a la bandeja de registros o revisar el tracking del " . $lang["flujo_registro_cobis"] . " en la siguiente tabla (misma opción puede revisarlo en el Detalle del Registro " . PREFIJO_TERCEROS . "%d).</div>";
 
-    // Panel de configuración
+// Panel de configuración
 
 $lang["ws_soa_fie_error"] = "Error comunicación SOA-FIE. Revise logs.";
 
@@ -2612,7 +2612,7 @@ $lang['sol_trabajo_actividad_pertenece_sec'] = 'Actividad del';
 // -- Nuevos Estados
 
 $lang['prospecto_jda_eval'] = 'Evaluación JDA';
-$lang['prospecto_jda_eval_texto'] = 'Comentario (opcional)';
+$lang['prospecto_jda_eval_texto'] = 'Observaciones';
 $lang['prospecto_jda_eval_usuario'] = $lang['prospecto_jda_eval'] . ' - Usuario';
 $lang['prospecto_jda_eval_fecha'] = $lang['prospecto_jda_eval'] . ' - Fecha';
 
@@ -2826,16 +2826,30 @@ $lang["norm_reporte_filtro_error"] = "Por favor debe seleccionar al menos una Ag
 $lang["norm_reporte_vencido_error"] = '<span style="color: #db1b1c; font-weight: bold;"> <i class="fa fa-exclamation-circle" aria-hidden="true"></i> Vencido</span>';
 
 $lang["norm_col_codigo"] = "Código";
-$lang["norm_col_agencia"] = "Agencia";
-$lang["norm_col_agente"] = "Normalizador/ Cobrador";
+$lang["norm_col_regional"] = "Regional";
+$lang["norm_col_agencia"] = "Agencia de la operación";
 $lang["norm_col_cliente"] = "Cliente";
+$lang["norm_col_dias_mora"] = "Días mora";
 $lang["norm_col_num_proceso"] = $lang['registro_num_proceso'];
-$lang["norm_col_estado"] = "Estado";
+$lang["norm_col_estado"] = "Estado de la operación";
+$lang["norm_col_agencia_registrada"] = "Agencia registrada";
+$lang["norm_col_agente"] = "Nombre Normalizador/ Cobrador";
+$lang["norm_col_persona_contactada"] = "Persona contactada";
 $lang["norm_col_rel_cred"] = $lang['norm_rel_cred'];
+$lang["norm_col_estado_solicitud"] = "Estado de la solicitud";
+$lang["norm_col_resultado_visita"] = "Resultado de la visita";
 $lang["norm_col_finalizacion"] = $lang['norm_finalizacion'];
-$lang["norm_col_fec_registro"] = "Fecha Registro";
-$lang["norm_col_fec_visita"] = "Fecha Visita";
+$lang["norm_col_fec_registro"] = "Fecha de registro";
+$lang["norm_col_hora_registro"] = "Hora de registro";
+$lang["norm_col_fecha_visita"] = "Fecha ultima visita";
+$lang["norm_col_hora_visita"] = "Hora ultima visita";
+$lang["norm_col_coor_ultima_visita"] = "Coordenada última visita";
+$lang["norm_col_fecha_consolidado"] = "Fecha consolidado";
+$lang["norm_col_hora_consolidado"] = "Hora consolidado";
 $lang["norm_col_fec_comp_pago"] = "Fecha Compromiso de Pago";
+$lang["norm_col_observaciones"] = "Observaciones";
+$lang["norm_col_fec_visita"] = "Fecha Visita";
+$lang["norm_sin_registrar"] = "Sin registrar";
 
 $lang['NormSupervisionTitulo'] = 'Supervisión de %s';
 $lang["NormSupervisionSubtitulo"] = 'En este apartado podrá generar reportes para efectuar la revisión de los casos Consolidados y/o No Consolidados por los %s de la(s) agencia(s) que supervisa. Puede aplicar uno o múltiples filtros para generar el reporte, así mismo puede filtrar los %s en base a las Agencias seleccionadas, y las mismas en base al Departamento.<br /><br />Nota: Las columnas "' . $lang["norm_col_fec_visita"] . '" y "' . $lang["norm_col_fec_comp_pago"] . '" son referidas a la <u>última visita registrada</u> por el %s.<br /><br />Las opciones disponibles, al contar con los perfiles respectivos, son: <br /> - Ver el detalle de los registros que tengan enlaces habilitados haciendo clic sobre los mismos. <br /> - Visualizar los documentos digitalizados. <br /> - Modificar ' . $lang['registro_num_proceso'] . ' (cuando el registro esté consolidado). <br /> - Modificar Agencia Asociada (cuando el registro esté consolidado).';
