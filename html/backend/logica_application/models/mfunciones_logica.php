@@ -5010,7 +5010,15 @@ class Mfunciones_logica extends CI_Model {
             $conf_sms_permitido_tiempo,
             $conf_sms_onb_ambiente,
             $conf_sms_permitido_txt_error,
-            
+
+            $conf_credit_autentication_uri,
+            $conf_credit_nro_uri,
+            $conf_credit_client_id,
+            $conf_credit_type,
+            $conf_credit_scope,
+            $conf_credit_user,
+            $conf_credit_password,
+
             $fecha_actual, $nombre_usuario, $conf_credenciales_id)
     {        
         try 
@@ -5082,6 +5090,15 @@ class Mfunciones_logica extends CI_Model {
                 conf_sms_permitido_tiempo=?,
                 conf_sms_onb_ambiente=?,
                 conf_sms_permitido_txt_error=?,
+                
+                conf_credit_autentication_uri=?,
+                conf_credit_nro_uri=?,
+                conf_credit_client_id=?,
+                conf_credit_type=?,
+                conf_credit_scope=?,
+                conf_credit_user=?,
+                conf_credit_password=?,
+                
 
                 accion_usuario=?, accion_fecha=? WHERE conf_general_id=? "; 
 
@@ -5162,7 +5179,15 @@ class Mfunciones_logica extends CI_Model {
                 $conf_sms_permitido_tiempo,
                 $conf_sms_onb_ambiente,
                 $conf_sms_permitido_txt_error,
-                
+
+                $conf_credit_autentication_uri,
+                $conf_credit_nro_uri,
+                $conf_credit_client_id,
+                $conf_credit_type,
+                $conf_credit_scope,
+                $conf_credit_user,
+                $conf_credit_password,
+
                 $nombre_usuario, $fecha_actual, $conf_credenciales_id));
                 $_SESSION["session_informacion"]["ad_active"] = $conf_ad_activo;
 

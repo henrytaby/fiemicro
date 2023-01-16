@@ -148,7 +148,13 @@
             "&conf_ad_test_user=" + $("#conf_ad_test_user").val() + 
             "&conf_ad_test_pass=" + $("#conf_ad_test_pass").val() + 
             "&conf_sms_name_plantilla=" + $("#conf_sms_name_plantilla").val() + 
-            "&conf_sms_channelid=" + $("#conf_sms_channelid").val() + 
+            "&conf_credit_nro_uri=" + $("#conf_credit_nro_uri").val() +
+            "&conf_credit_client_id=" + $("#conf_credit_client_id").val() +
+            "&conf_credit_type=" + $("#conf_credit_type").val() +
+            "&conf_credit_scope=" + $("#conf_credit_scope").val() +
+            "&conf_credit_user=" + $("#conf_credit_user").val() +
+            "&conf_credit_password=" + $("#conf_credit_password").val() +
+            "&conf_sms_channelid=" + $("#conf_sms_channelid").val() +
             "&sms_cel_test=" + $("#sms_cel_test").val();
     
         Ajax_CargadoGeneralPagina('Conf/General/TestWS', 'divElementoFlotante', "divErrorBusqueda", '', strParametros);
@@ -1816,17 +1822,116 @@
                             </tr>
                         </table>
                     </td>
-
                 </tr>
-                
-                            
 
             </table>
         
         </div>
-        
+
+
+        <br /><br />
+
+        <div style="font-weight: bold;" class="EnlaceSimple" onclick="VerTablaConf('numero_credito');">
+            <div class="titulo_seccion_conf"> <i class="fa fa-eye" aria-hidden="true"></i> CONSULTA DE NÚMERO DE CRÉDITO </div>
+        </div>
+
+
+            <div id="numero_credito" style="display: none;">
+
+                <div style="clear: both"></div>
+
+                <br /><br />
+
+                <table class="tablaresultados Mayuscula" style="width: 100%;" border="0">
+
+                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                    <tr class="<?php echo $strClase; ?>">
+
+                        <td style="width: 30%; font-weight: bold;">
+                            <?php echo $this->lang->line('conf_credit_autentication_uri'); ?>
+                            <span class="AyudaTooltip" data-balloon-length="medium" data-balloon=" <?php echo $this->lang->line('conf_credit_autentication_uri_ayuda'); ?>" data-balloon-pos="right"> </span>
+                        </td>
+
+                        <td style="width: 70%;">
+                            <?php echo $arrCajasHTML["conf_credit_autentication_uri"]; ?>
+                        </td>
+
+                    </tr>
+                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                    <tr class="<?php echo $strClase; ?>">
+
+                        <td style="width: 30%; font-weight: bold;">
+                            <?php echo $this->lang->line('conf_credit_nro_uri'); ?>
+                            <span class="AyudaTooltip" data-balloon-length="medium" data-balloon=" <?php echo $this->lang->line('conf_credit_nro_uri_ayuda'); ?>" data-balloon-pos="right"> </span>
+                        </td>
+
+                        <td style="width: 70%;">
+                            <?php echo $arrCajasHTML["conf_credit_nro_uri"]; ?>
+                        </td>
+
+                    </tr>
+
+
+                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                    <tr class="<?php echo $strClase; ?>">
+                        <td style="width: 30%; font-weight: bold;">
+                            <?php echo $this->lang->line('conf_credit_client_id'); ?>
+                        </td>
+                        <td style="width: 70%;">
+                            <?php echo $arrCajasHTML["conf_credit_client_id"]; ?>
+                        </td>
+                    </tr>
+
+
+                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                    <tr class="<?php echo $strClase; ?>">
+                        <td style="width: 30%; font-weight: bold;">
+                            <?php echo $this->lang->line('conf_credit_type'); ?>
+                        </td>
+                        <td style="width: 70%;">
+                            <?php echo $arrCajasHTML["conf_credit_type"]; ?>
+                        </td>
+                    </tr>
+
+
+                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                    <tr class="<?php echo $strClase; ?>">
+                        <td style="width: 30%; font-weight: bold;">
+                            <?php echo $this->lang->line('conf_credit_scope'); ?>
+                        </td>
+                        <td style="width: 70%;">
+                            <?php echo $arrCajasHTML["conf_credit_scope"]; ?>
+                        </td>
+                    </tr>
+
+
+                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                    <tr class="<?php echo $strClase; ?>">
+                        <td style="width: 30%; font-weight: bold;">
+                            <?php echo $this->lang->line('conf_credit_user'); ?>
+                        </td>
+                        <td style="width: 70%;">
+                            <?php echo $arrCajasHTML["conf_credit_user"]; ?>
+                        </td>
+                    </tr>
+
+
+                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                    <tr class="<?php echo $strClase; ?>">
+                        <td style="width: 30%; font-weight: bold;">
+                            <?php echo $this->lang->line('conf_credit_password'); ?>
+                        </td>
+                        <td style="width: 70%;">
+                            <?php echo $arrCajasHTML["conf_credit_password"]; ?>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
         </form>
-        
+
+
         <div style="clear: both"></div>
         
         <br /><br /><br />

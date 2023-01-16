@@ -59,26 +59,12 @@
 
 
     function check_credit_validation(codigo_operacion) {
-        let baseUri = 'https://localhost:3000/';
+        let baseUri = '/Bandeja/JDAEval/jsonope';
         let documento_del_cliente = <?php echo $arrRespuesta[0]['prospecto_id']?>;
         let id_del_cliente =  <?php echo $arrRespuesta[0]['general_ci'] . $arrRespuesta[0]['general_ci_extension']?>;
 
-        //Comentar código desde aquí hasta el siguiente comentario.
-        let test = {
-            "transactionId": "nostrud in",
-            "result": {
-                "disbursedAmount": "1400000",
-                "message": "La operación N pertenece al cliente con CI X en la APP. En el CORE pertenece al cliente Y con CI Z.",
-                "typeMessage": "INFO"
-            },
-            "timestamp": "1952-10-07T11:34:58.220Z"
-        }
-
-        $('#prospecto_desembolso_monto').val(test.result.disbursedAmount);
-
-        //Descomentar esste código
-        /*$.ajax({
-            url: `${baseUri}fie/msm/core/requestcredit/v1.0/checkCredit`,
+        $.ajax({
+            url: `${baseUri}`,
             type: 'get',
             data: {
                 customerDocumentNumber: documento_del_cliente,
@@ -87,23 +73,50 @@
             },
             dataType: 'json',
             success: function (response) {
-                $('#prospecto_desembolso_monto').val(response.result.disbursedAmount);
+                $("#jdamonto").removeClass("jdamonto-off");
+                $("#jdamonto").removeClass("jdamonto-on");
+                $("#jdamonto").removeClass("jdamonto-erro");
+
+                if(response.res==1){
+                    let monto1 = new Intl.NumberFormat('en-US',{  }).format(response.respapi.result.disbursedAmount);
+                    $('#prospecto_desembolso_monto').val(response.respapi.result.disbursedAmount);
+                    $('#jdamonto').html(monto1);
+                    $("#jdamonto").addClass("jdamonto-on");
+                    $("#btn_confirmacion").show();
+
+                }else if(response.res==2){
+                    $('#prospecto_desembolso_monto').val();
+                    $('#jdamonto').html("Número de Operación Inválida");
+                    $("#jdamonto").addClass("jdamonto-erro");
+                    $("#btn_confirmacion").hide();
+                }else{
+                    $('#jdamonto').html("Ocurrio un problema al momento de realizar la consulta.");
+                    $("#jdamonto").addClass("jdamonto-erro");
+                    $("#btn_confirmacion").hide();
+                }
             }
-        });*/
+        });
     }
 
     function check_registro_num_proceso() {
         var valor = parseInt($("#registro_num_proceso").val() || 0);
         valor = valor.toString();
 
+        $("#jdamonto").addClass("jdamonto-off");
+        $("#jdamonto").removeClass("jdamonto-on");
+        $('#prospecto_desembolso_monto').val(0);
+        //$("#btn_confirmacion").hide();
+        $('#jdamonto').html(0);
+
         if (!(/[^0-9]/.test(valor) || valor.length != <?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>)) {
             check_credit_validation(valor);
-
             $('#registro_num_proceso_label_error').hide();
             $('#registro_num_proceso_label_ok').show();
         } else {
             $('#registro_num_proceso_label_ok').hide();
             $('#registro_num_proceso_label_error').show();
+
+
         }
     }
 
@@ -137,7 +150,67 @@
 
     firstCharge();
     check_registro_num_proceso();
+
+
+    var snippet_jda = function(){
+        var jdamonto = $("#jdamonto");
+        var iniciar = function(){
+            $("#prospecto_desembolso_monto").attr('type','hidden');
+            //$("#btn_confirmacion").hide();
+        };
+        return {
+            init: function() {
+                iniciar();
+            }
+        };
+    }();
+
+    //== Class Initialization
+    jQuery(document).ready(function() {
+        snippet_jda.init();
+    });
 </script>
+
+<style>
+    .jdamonto-on{
+        background-color: rgba(227, 253, 235, 1);
+        border: 1px solid #578b58;
+        color: rgba(60, 118, 61, 1);
+        padding: 6px;
+        text-align: right;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .jdamonto-off{
+        background-color: #f7f7f7;
+        border: 1px solid #a7a7a7;
+        color: #777777;
+        padding: 6px;
+        text-align: right;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .jdamonto-erro{
+        background-color: #f8d7da;
+        border: 1px solid #dc3545;
+        color: #975057;
+        padding: 6px;
+        text-align: right;
+        font-size: 13px;
+        border-radius: 7px;
+    }
+    .msgapi{
+        background-color: #fcf8e3;
+        border: 1px solid #b1a181;
+        width: 75%;
+        font-size: 15px !important;
+        color: #846d3e;
+        border-radius: 7px;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+</style>
 
 <div id="divVistaMenuPantalla" align="center">
 
@@ -263,7 +336,9 @@
             </table>
 
             <br/>
-
+            <div id="msgapi" class="msgapi">
+                <?php echo $this->lang->line('prospecto_jda_eval_msgapi_off'); ?>
+            </div>
             <table class="tablaresultados Mayuscula" style="width: 80% !important;" border="0">
 
                 <?php $strClase = "FilaBlanca"; ?>
@@ -287,6 +362,7 @@
 
                     <td style="width: 70%;">
                         <?php echo $arrCajasHTML["prospecto_desembolso_monto"]; ?>
+                        <div id="jdamonto" class="jdamonto-off">0.0</div>
                     </td>
                 </tr>
 
@@ -330,7 +406,7 @@
                class="BotonMinimalista"> <?php echo $this->lang->line('BotonCancelar'); ?> </a>
         </div>
 
-        <div class="Botones2Opciones">
+        <div class="Botones2Opciones" id="btn_confirmacion">
             <a onclick="MostrarConfirmación();"
                class="BotonMinimalista"> <?php echo $this->lang->line('BotonAceptar'); ?> </a>
         </div>

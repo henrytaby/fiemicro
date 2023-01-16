@@ -144,7 +144,16 @@ class Conf_general_controller extends MY_Controller {
                     "conf_sms_permitido_cantidad" => $value["conf_sms_permitido_cantidad"],
                     "conf_sms_permitido_tiempo" => $value["conf_sms_permitido_tiempo"],
                     "conf_sms_onb_ambiente" => $value["conf_sms_onb_ambiente"],
-                    "conf_sms_permitido_txt_error" => $value["conf_sms_permitido_txt_error"]
+                    "conf_sms_permitido_txt_error" => $value["conf_sms_permitido_txt_error"],
+
+                    // Consulta numero de credito
+                    "conf_credit_autentication_uri" => $value["conf_credit_autentication_uri"],
+                    "conf_credit_nro_uri" => $value["conf_credit_nro_uri"],
+                    "conf_credit_client_id" => $value["conf_credit_client_id"],
+                    "conf_credit_type" => $value["conf_credit_type"],
+                    "conf_credit_scope" => $value["conf_credit_scope"],
+                    "conf_credit_user" => $value["conf_credit_user"],
+                    "conf_credit_password" => $value["conf_credit_password"]
                 );
                 $lst_resultado[$i] = $item_valor;
 
@@ -324,6 +333,29 @@ class Conf_general_controller extends MY_Controller {
             if($conf_sms_permitido_cantidad == 0) { $conf_sms_permitido_tiempo = 0; }
         $conf_sms_onb_ambiente = (int)$this->input->post('conf_sms_onb_ambiente', TRUE);
         $conf_sms_permitido_txt_error = str_replace('"', '\'', $this->input->post('conf_sms_permitido_txt_error', TRUE));
+
+        //consulta de numero de credito
+        $conf_credit_nro_uri = $this->input->post('conf_credit_nro_uri', TRUE);
+        $conf_credit_nro_uri = str_replace(' ', '', $conf_credit_nro_uri);
+
+        $conf_credit_autentication_uri = $this->input->post('conf_credit_autentication_uri', TRUE);
+        $conf_credit_autentication_uri = str_replace(' ', '', $conf_credit_autentication_uri);
+
+        $conf_credit_client_id = $this->input->post('conf_credit_client_id', TRUE);
+        $conf_credit_client_id = str_replace(' ', '', $conf_credit_client_id);
+
+        $conf_credit_type = $this->input->post('conf_credit_type', TRUE);
+        $conf_credit_type = str_replace(' ', '', $conf_credit_type);
+
+        $conf_credit_scope = $this->input->post('conf_credit_scope', TRUE);
+        $conf_credit_scope = str_replace(' ', '', $conf_credit_scope);
+
+        $conf_credit_user = $this->input->post('conf_credit_user', TRUE);
+        $conf_credit_user = str_replace(' ', '', $conf_credit_user);
+
+        $conf_credit_password = $this->input->post('conf_credit_password', TRUE);
+        $conf_credit_password = str_replace(' ', '', $conf_credit_password);
+        
         
         $nombre_usuario = $_SESSION["session_informacion"]["login"];
         $fecha_actual = date('Y-m-d H:i:s');
@@ -661,7 +693,36 @@ class Conf_general_controller extends MY_Controller {
             js_error_div_javascript($this->lang->line('conf_sms_tiempo_validez') . ' debe ser máx 5 dígitos.');
             exit();
         }
-        
+
+        //consulta de numero de credito
+        if($conf_credit_client_id == '')
+        {
+            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_client_id'));
+            exit();
+        }
+        if($conf_credit_nro_uri == '')
+        {
+            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_nro_uri'));
+            exit();
+        }
+
+        if($conf_credit_autentication_uri == '')
+        {
+            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_autentication_uri'));
+            exit();
+        }
+        if($conf_credit_user == '')
+        {
+            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_user'));
+            exit();
+        }
+        if($conf_credit_password == '')
+        {
+            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_password'));
+            exit();
+        }
+
+
         // Tiempo validéz del SMS no puede ser mayor al tiempo de validéz del token
         
         if($conf_sms_tiempo_validez > $conf_token_validez)
@@ -784,6 +845,16 @@ class Conf_general_controller extends MY_Controller {
                 $conf_sms_permitido_tiempo,
                 $conf_sms_onb_ambiente,
                 $conf_sms_permitido_txt_error,
+
+                //consulta de numero de tramite
+                $conf_credit_autentication_uri,
+                $conf_credit_nro_uri,
+                $conf_credit_client_id,
+                $conf_credit_type,
+                $conf_credit_scope,
+                $conf_credit_user,
+                $conf_credit_password,
+
                 
                 $fecha_actual, $nombre_usuario, $conf_general_id);
 
@@ -814,7 +885,15 @@ class Conf_general_controller extends MY_Controller {
         $sms_cel_test = $this->input->post('sms_cel_test', TRUE);
         $conf_sms_name_plantilla = $this->input->post('conf_sms_name_plantilla', TRUE);
         $conf_sms_channelid = (int)$this->input->post('conf_sms_channelid', TRUE);
-        
+
+        $conf_credit_autentication_uri = $this->input->post('conf_credit_autentication_uri', TRUE);
+        $conf_credit_nro_uri = $this->input->post('conf_credit_nro_uri', TRUE);
+        $conf_credit_client_id = $this->input->post('conf_credit_client_id', TRUE);
+        $conf_credit_type = $this->input->post('conf_credit_type', TRUE);
+        $conf_credit_scope = $this->input->post('conf_credit_scope', TRUE);
+        $conf_credit_user = $this->input->post('conf_credit_user', TRUE);
+        $conf_credit_password = $this->input->post('conf_credit_password', TRUE);
+
         if($conf_jwt_client_secret == '' || $conf_jwt_username == '' || $conf_jwt_password == '' || $conf_f_cobis_header == '')
         {
             js_invocacion_javascript('alert("' . $this->lang->line('conf_jwt_client_secret') . ', ' . $this->lang->line('conf_jwt_username') . ', ' . $this->lang->line('conf_jwt_password') . ' y ' . $this->lang->line('conf_f_cobis_header') . ' deben estar correctamente registrados.");');
@@ -1138,7 +1217,10 @@ class Conf_general_controller extends MY_Controller {
                     echo $texto_cerrar_ventana;
                     exit();
                 }
-                
+
+                $conf_credit_nro_uri = $this->mfunciones_generales->TextoNoAcentoNoEspaciosAux($conf_credit_nro_uri);
+                $conf_credit_autentication_uri = $this->mfunciones_generales->TextoNoAcentoNoEspaciosAux($conf_credit_autentication_uri);
+
                 $conf_sms_name_plantilla = $this->mfunciones_generales->TextoNoAcentoNoEspaciosAux($conf_sms_name_plantilla);
                 
                 if($conf_sms_name_plantilla == '' || $conf_sms_channelid < 0 || $conf_sms_channelid > 999999999)

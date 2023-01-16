@@ -439,8 +439,10 @@ $route['Bandeja/Verificacion/Form'] = "bandeja_verificacion_requisitos/bandeja_c
 $route['Bandeja/Verificacion/Guardar'] = "bandeja_verificacion_requisitos/bandeja_controller/Requisitos_Guardar";
 
 // -- -- JDA Evaluación
-$route['Bandeja/JDAEval/Form'] = "bandeja_verificacion_requisitos/bandeja_controller/JDA_Evaluacion";
-$route['Bandeja/JDAEval/Guardar'] = "bandeja_verificacion_requisitos/bandeja_controller/JDA_Evaluacion_Guardar";
+$route['Bandeja/JDAEval/Form']      = "bandeja_verificacion_requisitos/bandeja_controller/JDA_Evaluacion";
+$route['Bandeja/JDAEval/Guardar']   = "bandeja_verificacion_requisitos/bandeja_controller/JDA_Evaluacion_Guardar";
+
+$route['Bandeja/JDAEval/jsonope']   = "bandeja_verificacion_requisitos/bandeja_controller/JdaJsonOperacion";
 
 // -- -- Desembolso en COBIS
 $route['Bandeja/DesembCOBIS/Form'] = "bandeja_verificacion_requisitos/bandeja_controller/DesembCOBISForm";

@@ -2616,13 +2616,16 @@ $lang['prospecto_jda_eval_texto'] = 'Observaciones';
 $lang['prospecto_jda_eval_usuario'] = $lang['prospecto_jda_eval'] . ' - Usuario';
 $lang['prospecto_jda_eval_fecha'] = $lang['prospecto_jda_eval'] . ' - Fecha';
 
+$lang['prospecto_jda_eval_msgapi_off'] = "Ingrese el número de Operación para poder realizar la verificación, la verificaciòn se la realizará de forma automática al momento de ingresar un número de verificación válida.<br> Recuerda que el número de operación debe contener 11 dígitos. ";
+$lang['prospecto_jda_eval_msgapi_on'] = $lang['prospecto_jda_eval'] . ' - Fecha';
+
 $lang['registro_num_proceso'] = 'Número de Operación';
 $lang['registro_num_proceso_button'] = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i> REGISTRAR ' . mb_strtoupper($lang['registro_num_proceso']);
 $lang['registro_num_proceso_titulo'] = 'Por favor registre el ' . $lang['registro_num_proceso'] . '.';
 $lang['registro_num_proceso_cantidad'] = '11';
 $lang['registro_num_proceso_validate'] = 'debe ser ' . $lang['registro_num_proceso_cantidad'] . ' dígitos (mandatorio, numérico y sin caracteres especiales)';
 $lang['registro_num_proceso_error'] = 'El ' . $lang['registro_num_proceso'] . ' ' . $lang['registro_num_proceso_validate'] . '.';
-$lang['registro_num_proceso_label'] = '<span id="registro_num_proceso_label_ok" style="display: none;color: #006699;font-size: 1.2em;" title="¡Valor Correcto!"><i class="fa fa-check-circle" aria-hidden="true"></i></span><span id="registro_num_proceso_label_error" style="display: none;color: #ae0404;font-size: 1.1em;" title="¡Valor Incorrecto!"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>';
+$lang['registro_num_proceso_label'] = '<span id="registro_num_proceso_label_ok" style="display: none;color: #006699;font-size: 1.7em;" title="¡Valor Correcto!"><i class="fa fa-check-circle" aria-hidden="true"></i></span><span id="registro_num_proceso_label_error" style="display: none;color: #ae0404;font-size: 1.7em;" title="¡Valor Incorrecto!"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>';
 $lang['registro_num_proceso_error_desemb'] = $lang['registro_num_proceso_error'] . ' Por favor debe registrarlo previamente en "' . $lang['prospecto_jda_eval'] . '".';
 
 $lang['registro_num_proceso_error_app'] = 'No Consolidado: Debe registrar correctamente el ' . mb_strtoupper($lang['registro_num_proceso']) . ' para poder consolidar.';
@@ -2709,6 +2712,17 @@ $lang["date_range_ad"] = "Rango de Fechas:";
 
 $lang["detail_register_title_ad"] = "Detalle del Registro (Log)";
 $lang["detail_register_subtitle_ad"] = "auditoria_params: Parámetros enviados | auditoria_mensaje: Respuesta recibida";
+
+// CONSULTA NUMERO DE CRÉDITO
+$lang["conf_credit_nro_uri"] = "URI WS CREDIT";
+$lang["conf_credit_autentication_uri"] = "URI WS CREDIT AUTENTICATION";
+$lang["conf_credit_nro_uri_ayuda"] = "Registre la URI del Web Service. Puede testear la conexión, previamente debe registrar los parámetros por defecto e indicar un número celular para la prueba. ";
+$lang["conf_credit_autentication_uri_ayuda"] = "Registre la URI del Web Service para la autenticación. Puede testear la conexión, previamente debe registrar los parámetros por defecto e indicar un número celular para la prueba. ";
+$lang["conf_credit_client_id"] = "ID DEL CLIENTE ";
+$lang["conf_credit_type"] = "TIPO ";
+$lang["conf_credit_scope"] = "ALCANCE ";
+$lang["conf_credit_user"] = "NOMBRE DE USUARIO ";
+$lang["conf_credit_password"] = "PASSWORD ";
 
 // -- Integración Envío SMS
 

@@ -1337,7 +1337,6 @@ class Formulario_logica_general {
         $arr_validacion["conf_ad_test_pass"] = clone $this->formulario_campos;
         
         // -- Integración Envío SMS
-        
         $this->formulario_campos->CargarOpcionesValidacion('conf_sms_name_plantilla', LETRAS_NUMEROS, 'REQUERIDO|SINACENTO|SINESPACIO|MAX(15)', '.|_|-');
         $arr_validacion["conf_sms_name_plantilla"] = clone $this->formulario_campos;
         
@@ -1346,9 +1345,29 @@ class Formulario_logica_general {
         
         $this->formulario_campos->CargarOpcionesValidacion('conf_sms_permitido_txt_error', LETRAS_NUMEROS, 'MAX(280)|REQUERIDO', '!|¡|@|#|$|%|&|/|¿|?|+|<|>|=|\'|;|:|.|-|(|)|,');
         $arr_validacion["conf_sms_permitido_txt_error"] = clone $this->formulario_campos;
-        
+
+        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_nro_uri', LETRAS_NUMEROS, 'REQUERIDO|SINESPACIO', '?|#|.|:|_|-|/|\\');
+        $arr_validacion['conf_credit_nro_uri'] = clone $this->formulario_campos;
+
+        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_autentication_uri', LETRAS_NUMEROS, 'REQUERIDO|SINESPACIO', '?|#|.|:|_|-|/|\\');
+        $arr_validacion['conf_credit_autentication_uri'] = clone $this->formulario_campos;
+
+        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_user', LETRAS_NUMEROS, 'REQUERIDO', '?|#|.|:|_|-|/|\\');
+        $arr_validacion['conf_credit_user'] = clone $this->formulario_campos;
+
+        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_password', LETRAS_NUMEROS, 'REQUERIDO', '?|#|.|:|_|-|/|\\');
+        $arr_validacion['conf_credit_password'] = clone $this->formulario_campos;
+
+        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_client_id', LETRAS_NUMEROS, 'MAX(145)', '?|#|.|:|_|-|/|\\');
+        $arr_validacion["conf_credit_client_id"] = clone $this->formulario_campos;
+        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_type', LETRAS_NUMEROS, 'MAX(145)', '?|#|.|:|_|-|/|\\');
+        $arr_validacion["conf_credit_type"] = clone $this->formulario_campos;
+        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_scope', LETRAS_NUMEROS, 'MAX(145)', '?|#|.|:|_|-|/|\\');
+        $arr_validacion["conf_credit_scope"] = clone $this->formulario_campos;
+
+
+
         // FORMULARIOS FIE - FIN
-        
         $this->arr_validacion = $arr_validacion;
     }
 
