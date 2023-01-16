@@ -685,6 +685,7 @@ $route['SolWeb/Envio/SMS'] = "solicitud_credito/envio_sms_controller/EnvioSMS";
 
 $route['Registros/Principal'] = "registros/registros_controller/VistaPrincipal";
 $route['Registros/Principal/Inicio'] = "registros/registros_controller/VistaInicio";
+$route['Registros/Principal/jsonope']   = "registros/registros_controller/JdaJsonOperacion";
 
 // -- Normalizador/Cobrador
 

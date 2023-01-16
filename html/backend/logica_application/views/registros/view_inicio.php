@@ -20,6 +20,9 @@
                 $(this).select();
             }
         });
+
+
+
     });
     
     $('#registro_num_proceso').on('keyup change', function(){
@@ -29,11 +32,16 @@
     function check_registro_num_proceso()
     {
         var valor = parseInt($("#registro_num_proceso").val() || 0);
-        
         valor = valor.toString();
+
+        $("#jdamonto").addClass("jdamonto-off");
+        $("#jdamonto").removeClass("jdamonto-on");
+        $('#prospecto_desembolso_monto').val(0);
+        //$('#jdamonto').html(0);
         
         if(!( /[^0-9]/.test( valor ) || valor.length != <?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>))
         {
+            check_credit_validation(valor);
             $('#registro_num_proceso_button').prop('disabled', false);
             
             $('#registro_num_proceso_label_error').hide();
@@ -49,7 +57,49 @@
     }
     
     check_registro_num_proceso();
-    
+
+
+function check_credit_validation(codigo_operacion) {
+    let baseUri = '/Registros/Principal/jsonope';
+    let documento_del_cliente = <?php echo $arrRespuesta[0]['prospecto_id']?>;
+    let id_del_cliente =  <?php echo $arrRespuesta[0]['general_ci'] . $arrRespuesta[0]['general_ci_extension']?>;
+
+    $.ajax({
+        url: `${baseUri}`,
+        type: 'get',
+        data: {
+            customerDocumentNumber: documento_del_cliente,
+            id: id_del_cliente,
+            creditOperation: codigo_operacion,
+        },
+        dataType: 'json',
+        success: function (response) {
+            $("#jdamonto").removeClass("jdamonto-off");
+            $("#jdamonto").removeClass("jdamonto-on");
+            $("#jdamonto").removeClass("jdamonto-erro");
+
+            if(response.res==1){
+                let monto1 = new Intl.NumberFormat('en-US',{  }).format(response.respapi.result.disbursedAmount);
+                $('#prospecto_desembolso_monto').val(response.respapi.result.disbursedAmount);
+                $('#jdamonto').html(monto1);
+                $("#jdamonto").addClass("jdamonto-on");
+                $("#registro_num_proceso_button").show();
+
+            }else if(response.res==2){
+                $('#prospecto_desembolso_monto').val();
+                $('#jdamonto').html("Número de Operación Inválida");
+                $("#jdamonto").addClass("jdamonto-erro");
+                $("#registro_num_proceso_button").hide();
+            }else{
+                $('#jdamonto').html("Ocurrio un problema al momento de realizar la consulta.");
+                $("#jdamonto").addClass("jdamonto-erro");
+                $("#registro_num_proceso_button").hide();
+            }
+        }
+    });
+}
+
+
     function EnviarAuxiliar(estructura_id, codigo_rubro, home_ant_sig, tipo_registro="0")
     {
         var vista_actual = "datos_generales";
@@ -148,8 +198,70 @@
                 break;
         }
     }
-    
+
+
+
+var snippet_jda = function(){
+    //var jdamonto = $("#jdamonto");
+    var iniciar = function(){
+        //$("#prospecto_desembolso_monto").attr('type','hidden');
+        $("#registro_num_proceso_button").hide();
+    };
+    return {
+        init: function() {
+            iniciar();
+        }
+    };
+}();
+
+//== Class Initialization
+jQuery(document).ready(function() {
+    snippet_jda.init();
+});
+
 </script>
+
+
+<style>
+    .jdamonto-on{
+        background-color: rgba(227, 253, 235, 1);
+        border: 1px solid #578b58;
+        color: rgba(60, 118, 61, 1);
+        padding: 6px;
+        text-align: right;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .jdamonto-off{
+        background-color: #f7f7f7;
+        border: 1px solid #a7a7a7;
+        color: #777777;
+        padding: 6px;
+        text-align: right;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .jdamonto-erro{
+        background-color: #f8d7da;
+        border: 1px solid #dc3545;
+        color: #975057;
+        padding: 6px;
+        text-align: right;
+        font-size: 13px;
+        border-radius: 7px;
+    }
+    .msgapi{
+        background-color: #fcf8e3;
+        border: 1px solid #b1a181;
+        width: 75%;
+        font-size: 15px !important;
+        color: #846d3e;
+        border-radius: 7px;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+</style>
 
     <?php
 
@@ -658,7 +770,24 @@ if($arrRespuesta[0]['onboarding'] == 0)
                         <?php echo $this->lang->line('registro_num_proceso_label'); ?>
                         
                     </label>
-                    <input style="width: 100%; height: 18px;" type="number" autocomplete="off" value="<?php echo $arrRespuesta[0]['registro_num_proceso']; ?>" id="registro_num_proceso" name="registro_num_proceso" maxlength="<?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>" title="" onkeydown="return (event.keyCode != 13);">
+                    <input style="width: 100%; height: 18px;" type="number" autocomplete="off" value="<?php echo $arrRespuesta[0]['registro_num_proceso']; ?>"
+                           id="registro_num_proceso" name="registro_num_proceso" maxlength="<?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>"
+                           title="" onkeydown="return (event.keyCode != 13);">
+
+
+                    <table class="tablaresultados Mayuscula" style="margin-top: 10px !important;width: 100% !important;" border="0">
+                        <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                        <tr class="<?php echo $strClase; ?>">
+                            <td style="width: 30%; font-weight: bold;">
+                                <?php echo $this->lang->line('prospecto_desembolso_monto'); ?>
+                            </td>
+
+                            <td style="width: 70%;">
+                                <?php echo $arrCajasHTML["prospecto_desembolso_monto"]; ?>
+                                <div id="jdamonto" class="jdamonto-off">0.0</div>
+                            </td>
+                        </tr>
+                    </table>
 
                     <br /><br />
 
