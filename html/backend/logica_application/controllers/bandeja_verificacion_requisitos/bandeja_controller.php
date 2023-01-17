@@ -246,11 +246,11 @@ class Bandeja_controller extends MY_Controller {
         $this->load->model('mfunciones_logica');
         $this->load->model('mfunciones_microcreditos');
 
-        /*if(!isset($_POST['estructura_id']))
+        if(!isset($_POST['estructura_id']))
         {
             js_error_div_javascript($this->lang->line('NoAutorizado'));
             exit();
-        }*/
+        }
 
         $codigo_prospecto = $this->input->post('estructura_id', TRUE);
         //$registro_num_proceso = (int)$this->input->post('registro_num_proceso', TRUE);
