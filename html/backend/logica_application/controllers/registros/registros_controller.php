@@ -8555,14 +8555,6 @@ class Registros_controller extends CI_Controller {
         $api_credit["conf_credit_scope"] = $arrConf["conf_credit_scope"];
         $api_credit["conf_credit_user"] = $arrConf["conf_credit_user"];
         $api_credit["conf_credit_password"] = $arrConf["conf_credit_password"];
-        /*/
-        echo "<pre>";
-        print_r($_SESSION);
-        print_r($api_credit);
-        //print_r($arrConf);
-        echo "</pre>";
-        exit;
-        /**/
 
         /**
          * Variables recibidas para realizar las operaciones

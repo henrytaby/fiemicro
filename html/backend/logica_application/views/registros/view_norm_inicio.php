@@ -3,7 +3,7 @@
     $estructura_id = $arrRespuesta[0]['norm_id'];
     $vista_actual = $arrRespuesta[0]['norm_ultimo_paso'];
     $codigo_rubro = $arrRespuesta[0]['camp_id'];
-    $norm_finalizacion = '$arrRespuesta[0]['norm_finalizacion']';
+    $norm_finalizacion = "$arrRespuesta[0]['norm_finalizacion']";
 ?>
 
     $(document).ready(function(){ 

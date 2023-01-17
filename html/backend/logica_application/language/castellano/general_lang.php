@@ -2615,17 +2615,14 @@ $lang['prospecto_jda_eval'] = 'Evaluación JDA';
 $lang['prospecto_jda_eval_texto'] = 'Observaciones';
 $lang['prospecto_jda_eval_usuario'] = $lang['prospecto_jda_eval'] . ' - Usuario';
 $lang['prospecto_jda_eval_fecha'] = $lang['prospecto_jda_eval'] . ' - Fecha';
-
 $lang['prospecto_jda_eval_msgapi_off'] = "Ingrese el número de Operación para poder realizar la verificación, la verificaciòn se la realizará de forma automática al momento de ingresar un número de verificación válida.<br> Recuerda que el número de operación debe contener 11 dígitos. ";
-$lang['prospecto_jda_eval_msgapi_on'] = $lang['prospecto_jda_eval'] . ' - Fecha';
-
 $lang['registro_num_proceso'] = 'Número de Operación';
 $lang['registro_num_proceso_button'] = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i> REGISTRAR ' . mb_strtoupper($lang['registro_num_proceso']);
 $lang['registro_num_proceso_titulo'] = 'Por favor registre el ' . $lang['registro_num_proceso'] . '.';
 $lang['registro_num_proceso_cantidad'] = '11';
 $lang['registro_num_proceso_validate'] = 'debe ser ' . $lang['registro_num_proceso_cantidad'] . ' dígitos (mandatorio, numérico y sin caracteres especiales)';
 $lang['registro_num_proceso_error'] = 'El ' . $lang['registro_num_proceso'] . ' ' . $lang['registro_num_proceso_validate'] . '.';
-$lang['registro_num_proceso_label'] = '<span id="registro_num_proceso_label_ok" style="display: none;color: #006699;font-size: 1.7em;" title="¡Valor Correcto!"><i class="fa fa-check-circle" aria-hidden="true"></i></span><span id="registro_num_proceso_label_error" style="display: none;color: #ae0404;font-size: 1.7em;" title="¡Valor Incorrecto!"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>';
+$lang['registro_num_proceso_label'] = '<span id="registro_num_proceso_label_ok" style="display: none;color: #006699;font-size: 1.2em;" title="¡Valor Correcto!"><i class="fa fa-check-circle" aria-hidden="true"></i></span><span id="registro_num_proceso_label_error" style="display: none;color: #ae0404;font-size: 1.1em;" title="¡Valor Incorrecto!"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>';
 $lang['registro_num_proceso_error_desemb'] = $lang['registro_num_proceso_error'] . ' Por favor debe registrarlo previamente en "' . $lang['prospecto_jda_eval'] . '".';
 
 $lang['registro_num_proceso_error_app'] = 'No Consolidado: Debe registrar correctamente el ' . mb_strtoupper($lang['registro_num_proceso']) . ' para poder consolidar.';
@@ -2838,30 +2835,16 @@ $lang["norm_reporte_filtro_error"] = "Por favor debe seleccionar al menos una Ag
 $lang["norm_reporte_vencido_error"] = '<span style="color: #db1b1c; font-weight: bold;"> <i class="fa fa-exclamation-circle" aria-hidden="true"></i> Vencido</span>';
 
 $lang["norm_col_codigo"] = "Código";
-$lang["norm_col_regional"] = "Regional";
-$lang["norm_col_agencia"] = "Agencia de la operación";
+$lang["norm_col_agencia"] = "Agencia";
+$lang["norm_col_agente"] = "Normalizador/ Cobrador";
 $lang["norm_col_cliente"] = "Cliente";
-$lang["norm_col_dias_mora"] = "Días mora";
 $lang["norm_col_num_proceso"] = $lang['registro_num_proceso'];
-$lang["norm_col_estado"] = "Estado de la operación";
-$lang["norm_col_agencia_registrada"] = "Agencia registrada";
-$lang["norm_col_agente"] = "Nombre Normalizador/ Cobrador";
-$lang["norm_col_persona_contactada"] = "Persona contactada";
+$lang["norm_col_estado"] = "Estado";
 $lang["norm_col_rel_cred"] = $lang['norm_rel_cred'];
-$lang["norm_col_estado_solicitud"] = "Estado de la solicitud";
-$lang["norm_col_resultado_visita"] = "Resultado de la visita";
 $lang["norm_col_finalizacion"] = $lang['norm_finalizacion'];
-$lang["norm_col_fec_registro"] = "Fecha de registro";
-$lang["norm_col_hora_registro"] = "Hora de registro";
-$lang["norm_col_fecha_visita"] = "Fecha ultima visita";
-$lang["norm_col_hora_visita"] = "Hora ultima visita";
-$lang["norm_col_coor_ultima_visita"] = "Coordenada última visita";
-$lang["norm_col_fecha_consolidado"] = "Fecha consolidado";
-$lang["norm_col_hora_consolidado"] = "Hora consolidado";
-$lang["norm_col_fec_comp_pago"] = "Fecha Compromiso de Pago";
-$lang["norm_col_observaciones"] = "Observaciones";
+$lang["norm_col_fec_registro"] = "Fecha registro";
 $lang["norm_col_fec_visita"] = "Fecha Visita";
-$lang["norm_sin_registrar"] = "Sin registrar";
+$lang["norm_col_fec_comp_pago"] = "Fecha Compromiso de Pago";
 
 $lang['NormSupervisionTitulo'] = 'Supervisión de %s';
 $lang["NormSupervisionSubtitulo"] = 'En este apartado podrá generar reportes para efectuar la revisión de los casos Consolidados y/o No Consolidados por los %s de la(s) agencia(s) que supervisa. Puede aplicar uno o múltiples filtros para generar el reporte, así mismo puede filtrar los %s en base a las Agencias seleccionadas, y las mismas en base al Departamento.<br /><br />Nota: Las columnas "' . $lang["norm_col_fec_visita"] . '" y "' . $lang["norm_col_fec_comp_pago"] . '" son referidas a la <u>última visita registrada</u> por el %s.<br /><br />Las opciones disponibles, al contar con los perfiles respectivos, son: <br /> - Ver el detalle de los registros que tengan enlaces habilitados haciendo clic sobre los mismos. <br /> - Visualizar los documentos digitalizados. <br /> - Modificar ' . $lang['registro_num_proceso'] . ' (cuando el registro esté consolidado). <br /> - Modificar Agencia Asociada (cuando el registro esté consolidado).';

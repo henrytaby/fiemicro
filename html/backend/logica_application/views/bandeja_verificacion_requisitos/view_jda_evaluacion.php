@@ -38,7 +38,7 @@
     }
 
     <?php
-    if ((int)$codigo_tipo_persona != 6)
+    if((int)$codigo_tipo_persona != 6)
     {
         echo '  $(document).ready(function(){
                     $("#prospecto_jda_eval").append($("<option>", {
@@ -50,12 +50,11 @@
     ?>
 
     $('#registro_num_proceso').on('click', function () {
-        if ($(this).val() == 0)
+        if($(this).val() == 0)
         {
             $(this).select();
         }
     });
-
 
     $('#prospecto_jda_eval').on('change', function () {
         let commentRow = $('.FilaBlanca').last();
@@ -73,8 +72,6 @@
             commentRow.hide();
         }
     })
-
-
 
 
     function firstCharge() {
@@ -109,6 +106,7 @@
     jQuery(document).ready(function() {
         snippet_jda.init();
     });
+
 </script>
 
 <style>
@@ -149,35 +147,31 @@
         margin-bottom: 10px;
         padding: 10px;
     }
-
 </style>
 
 <div id="divVistaMenuPantalla" align="center">
 
     <div id="divCargarFormulario" class="TamanoContenidoGeneral">
 
-        <br/><br/>
+        <br /><br />
 
-        <div class="FormularioSubtituloImagenNormal"
-             style="background: url(html_public/imagenes/logo_senaf.png) no-repeat; background-size: contain; background-position: center;"></div>
+        <div class="FormularioSubtituloImagenNormal" style="background: url(html_public/imagenes/logo_senaf.png) no-repeat; background-size: contain; background-position: center;"> </div>
 
         <div class="FormularioSubtitulo"> <?php echo $this->lang->line('TituloJDA_Evaluacion'); ?></div>
         <div class="FormularioSubtituloComentarioNormal "><?php echo str_replace('“Aprobado” o “Rechazado”', '"Aprobado", "Rechazado" o "Devolver al Oficial de Negocios" (opción disponible sólo para Estudio de Crédito)', $this->lang->line('SubJDA_Evaluacion')); ?></div>
 
         <div style="clear: both"></div>
 
-        <br/>
+        <br />
 
         <form id="FormularioRegistroLista" method="post">
 
             <?php // COLOCAR AQUI LA RUTA PARA REDIRECCIONAR ?>
 
-            <input type="hidden" name="redireccionar" value=""/>
+            <input type="hidden" name="redireccionar" value="" />
 
-            <input type="hidden" name="estructura_id" value="<?php if (isset($arrRespuesta[0]["prospecto_id"])) {
-                echo $arrRespuesta[0]["prospecto_id"];
-            } ?>"/>
-            <input type="hidden" name="codigo_tipo_persona" value="<?php echo $codigo_tipo_persona; ?>"/>
+            <input type="hidden" name="estructura_id" value="<?php if(isset($arrRespuesta[0]["prospecto_id"])){ echo $arrRespuesta[0]["prospecto_id"]; } ?>" />
+            <input type="hidden" name="codigo_tipo_persona" value="<?php echo $codigo_tipo_persona; ?>" />
 
             <table class="tablaresultados Mayuscula" style="width: 80% !important;" border="0">
 
@@ -193,21 +187,20 @@
                     <td style="width: 70%;">
 
                         <?php
-                        if ($arrRespuesta[0]["camp_id"] >= 7 && $arrRespuesta[0]["camp_id"] <= 12) {
+                        if($arrRespuesta[0]["camp_id"] >= 7 && $arrRespuesta[0]["camp_id"] <= 12)
+                        {
                             ?>
-                            <span class="EnlaceSimple"
-                                  onclick="Ajax_CargarAccion_DetalleSolicitudCred('<?php echo $arrRespuesta[0]["prospecto_id"]; ?>', 0)">
-                            <?php echo 'SOL_' . $arrRespuesta[0]["prospecto_id"]; ?> <i class="fa fa-external-link"
-                                                                                        aria-hidden="true"></i>
+                            <span class="EnlaceSimple" onclick="Ajax_CargarAccion_DetalleSolicitudCred('<?php echo $arrRespuesta[0]["prospecto_id"]; ?>', 0)">
+                            <?php echo 'SOL_' . $arrRespuesta[0]["prospecto_id"]; ?> <i class="fa fa-external-link" aria-hidden="true"></i>
                         </span>
 
                             <?php
-                        } else {
+                        }
+                        else
+                        {
                             ?>
-                            <span class="EnlaceSimple"
-                                  onclick="Ajax_CargarAccion_DetalleProspecto('<?php echo $arrRespuesta[0]["prospecto_id"]; ?>')">
-                            <?php echo PREFIJO_PROSPECTO . $arrRespuesta[0]["prospecto_id"]; ?> <i
-                                        class="fa fa-external-link" aria-hidden="true"></i>
+                            <span class="EnlaceSimple" onclick="Ajax_CargarAccion_DetalleProspecto('<?php echo $arrRespuesta[0]["prospecto_id"]; ?>')">
+                            <?php echo PREFIJO_PROSPECTO . $arrRespuesta[0]["prospecto_id"]; ?> <i class="fa fa-external-link" aria-hidden="true"></i>
                         </span>
                             <?php
                         }
@@ -254,7 +247,6 @@
                         echo $arrRespuesta[0]["general_solicitante"];
                         echo " | C.I.:";
                         echo $arrRespuesta[0]["general_ci"];
-                        //log_message('ERROR', var_export($arrRespuesta[0]));;
                         ?>
                     </td>
 
@@ -275,7 +267,7 @@
 
             </table>
 
-            <br/>
+            <br />
             <div id="msgapi" class="msgapi">
                 <?php echo $this->lang->line('prospecto_jda_eval_msgapi_off'); ?>
             </div>
@@ -331,7 +323,7 @@
 
         </form>
 
-        <br/><br/><br/>
+        <br /><br /><br />
 
         <div class="Botones2Opciones">
 
@@ -341,13 +333,11 @@
 
             ?>
 
-            <a onclick="Ajax_CargarOpcionMenu('<?php echo $direccion_bandeja; ?>');"
-               class="BotonMinimalista"> <?php echo $this->lang->line('BotonCancelar'); ?> </a>
+            <a onclick="Ajax_CargarOpcionMenu('<?php echo $direccion_bandeja; ?>');" class="BotonMinimalista"> <?php echo $this->lang->line('BotonCancelar'); ?> </a>
         </div>
 
         <div class="Botones2Opciones" id="btn_confirmacion">
-            <a onclick="MostrarConfirmación();"
-               class="BotonMinimalista"> <?php echo $this->lang->line('BotonAceptar'); ?> </a>
+            <a onclick="MostrarConfirmación();" class="BotonMinimalista"> <?php echo $this->lang->line('BotonAceptar'); ?> </a>
         </div>
 
         <div style="clear: both"></div>
@@ -356,22 +346,21 @@
 
     <div id="confirmacion" class="PreguntaConfirmacion TamanoContenidoGeneral">
 
-        <div class="FormularioSubtituloImagenPregunta"></div>
+        <div class="FormularioSubtituloImagenPregunta"> </div>
 
         <div class="PreguntaTitulo"> <?php echo $this->lang->line('PreguntaTitulo'); ?></div>
         <div class="PreguntaTexto "><?php echo $this->lang->line('jda_eval_Pregunta'); ?></div>
 
         <div style="clear: both"></div>
 
-        <br/>
+        <br />
 
         <div class="PreguntaConfirmar">
             <?php echo $this->lang->line('PreguntaContinuar'); ?>
         </div>
 
         <div class="Botones2Opciones">
-            <a onclick="OcultarConfirmación();"
-               class="BotonMinimalista"> <?php echo $this->lang->line('BotonCancelar'); ?> </a>
+            <a onclick="OcultarConfirmación();" class="BotonMinimalista"> <?php echo $this->lang->line('BotonCancelar'); ?> </a>
         </div>
 
         <div class="Botones2Opciones">
@@ -380,7 +369,7 @@
 
         <div style="clear: both"></div>
 
-        <br/>
+        <br />
 
         <?php if (isset($respuesta)) { ?>
             <div class="mensajeBD">
@@ -390,7 +379,7 @@
             </div>
         <?php } ?>
 
-        <div id="divErrorListaResultado" class="mensajeBD"></div>
+        <div id="divErrorListaResultado" class="mensajeBD"> </div>
 
     </div>
 </div>

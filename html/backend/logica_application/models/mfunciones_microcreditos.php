@@ -3490,8 +3490,8 @@ class Mfunciones_microcreditos extends CI_Model {
                     INNER JOIN rol r ON r.rol_id=u.usuario_rol
                     INNER JOIN perfil_app pa ON pa.perfil_app_id=r.perfil_app_id
                     INNER JOIN estructura_agencia ea ON ea.estructura_agencia_id=u.estructura_agencia_id
-                    INNER JOIN estructura_regional er ON er.estructura_regional_id=ea.estructura_agencia_id
-                    WHERE e.ejecutivo_id=? "; 
+                    INNER JOIN estructura_regional er ON er.estructura_regional_id=ea.estructura_regional_id
+                    WHERE e.ejecutivo_id=? ";
 
             $consulta = $this->db->query($sql, array($codigo_ejecutivo));
 
@@ -5224,6 +5224,8 @@ class Mfunciones_microcreditos extends CI_Model {
     {
         try {
             $sql = "UPDATE prospecto SET
+                     
+                     
                         prospecto_jda_eval=?,
                         prospecto_jda_eval_texto=?,
                         prospecto_jda_eval_usuario=?,
@@ -5231,6 +5233,7 @@ class Mfunciones_microcreditos extends CI_Model {
                         accion_usuario=?,
                         accion_fecha=?                        
                     WHERE prospecto_id = ?";
+
             $this->db->query($sql, array( $prospecto_jda_eval, $prospecto_jda_eval_texto, $prospecto_jda_eval_usuario, $accion_fecha, $accion_usuario, $accion_fecha, $codigo_prospecto));
 
             return TRUE;
@@ -5277,7 +5280,9 @@ class Mfunciones_microcreditos extends CI_Model {
         try {
             
             $sql = "UPDATE prospecto SET
+                     
                         prospecto_desembolso=?,
+                     
                         prospecto_desembolso_usuario=?,
                         prospecto_desembolso_fecha=?,
                         accion_usuario=?,

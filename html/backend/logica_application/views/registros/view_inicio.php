@@ -3,7 +3,7 @@
     $estructura_id = $arrRespuesta[0]['prospecto_id'];
     $vista_actual = $arrRespuesta[0]['prospecto_ultimo_paso'];
     $codigo_rubro = $arrRespuesta[0]['camp_id'];
-    $codigo_rubro = $arrRespuesta[0]['camp_id'];
+    $codigo_evaluacion = $arrRespuesta[0]['prospecto_evaluacion'];
     $prospecto_desembolso_monto = $arrRespuesta[0]['prospecto_desembolso_monto'];
 ?>
 
@@ -21,27 +21,22 @@
                 $(this).select();
             }
         });
-
-
-
     });
     
-    //$('#registro_num_proceso').on('keyup change', function(){
     $('#registro_num_proceso').on('keyup', function(){
-    //$('#registro_num_proceso').change(function(){
         check_registro_num_proceso();
     });
     
     function check_registro_num_proceso()
     {
         var valor = parseInt($("#registro_num_proceso").val() || 0);
+
         valor = valor.toString();
 
         $("#jdamonto").addClass("jdamonto-off");
         $("#jdamonto").removeClass("jdamonto-on");
         $('#prospecto_desembolso_monto').val(0);
-        //$('#jdamonto').html(0);
-        
+
         if(!( /[^0-9]/.test( valor ) || valor.length != <?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>))
         {
             check_credit_validation(valor);
@@ -59,48 +54,6 @@
         }
     }
 
-function check_credit_validation(codigo_operacion) {
-    let baseUri = '/Registros/Principal/jsonope';
-    let documento_del_cliente = <?php echo $arrRespuesta[0]['prospecto_id']?>;
-    let id_del_cliente =  <?php echo $arrRespuesta[0]['general_ci'] . $arrRespuesta[0]['general_ci_extension']?>;
-
-    $.ajax({
-        url: `${baseUri}`,
-        type: 'get',
-        data: {
-            customerDocumentNumber: documento_del_cliente,
-            id: id_del_cliente,
-            creditOperation: codigo_operacion,
-        },
-        dataType: 'json',
-        success: function (response) {
-            $("#jdamonto").removeClass("jdamonto-off");
-            $("#jdamonto").removeClass("jdamonto-on");
-            $("#jdamonto").removeClass("jdamonto-erro");
-
-            if(response.res==1){
-                let monto1 = new Intl.NumberFormat('en-US',{  }).format(response.respapi.result.disbursedAmount);
-                $('#prospecto_desembolso_monto').val(response.respapi.result.disbursedAmount);
-                $('#jdamonto').html(monto1);
-
-                $("#jdamonto").addClass("jdamonto-on");
-                $("#registro_num_proceso_button").show();
-
-            }else if(response.res==2){
-                $('#prospecto_desembolso_monto').val();
-                $('#jdamonto').html("Número de Operación Inválida");
-                $("#jdamonto").addClass("jdamonto-erro");
-                $("#registro_num_proceso_button").hide();
-            }else{
-                $('#jdamonto').html("Ocurrio un problema al momento de realizar la consulta.");
-                $("#jdamonto").addClass("jdamonto-erro");
-                $("#registro_num_proceso_button").hide();
-            }
-        }
-    });
-}
-
-
     function EnviarAuxiliar(estructura_id, codigo_rubro, home_ant_sig, tipo_registro="0")
     {
         var vista_actual = "datos_generales";
@@ -108,7 +61,6 @@ function check_credit_validation(codigo_operacion) {
 
         var strParametros = "&estructura_id=" + estructura_id + "&codigo_rubro=" + codigo_rubro + "&vista_actual=" + vista_actual + "&home_ant_sig=" + home_ant_sig + "&sin_guardar=" + sin_guardar + "&tipo_registro=" + tipo_registro;
         strParametros += "&prospecto_desembolso_monto="+$("#prospecto_desembolso_monto").val();
-
         Ajax_CargadoGeneralPagina("../Pasos/Guardar", "divContenidoGeneral", "divErrorBusqueda", "SIN_FOCUS", strParametros);
     }
     
@@ -201,29 +153,70 @@ function check_credit_validation(codigo_operacion) {
         }
     }
 
+    function check_credit_validation(codigo_operacion) {
+        let baseUri = '/Registros/Principal/jsonope';
+        let documento_del_cliente = <?php echo $arrRespuesta[0]['prospecto_id']?>;
+        let id_del_cliente =  <?php echo $arrRespuesta[0]['general_ci'] . $arrRespuesta[0]['general_ci_extension']?>;
 
+        $.ajax({
+            url: `${baseUri}`,
+            type: 'get',
+            data: {
+                customerDocumentNumber: documento_del_cliente,
+                id: id_del_cliente,
+                creditOperation: codigo_operacion,
+            },
+            dataType: 'json',
+            success: function (response) {
+                $("#jdamonto").removeClass("jdamonto-off");
+                $("#jdamonto").removeClass("jdamonto-on");
+                $("#jdamonto").removeClass("jdamonto-erro");
 
-var snippet_jda = function(){
-    //var jdamonto = $("#jdamonto");
-    var iniciar = function(){
-        //$("#prospecto_desembolso_monto").attr('type','hidden');
-        $("#registro_num_proceso_button").hide();
-    };
-    return {
-        init: function() {
-            iniciar();
-        }
-    };
-}();
+                let numero = response.respapi.result.disbursedAmount;
+                if (numero == ""){
+                    numero =0;
+                }
 
-//== Class Initialization
-jQuery(document).ready(function() {
-    snippet_jda.init();
-});
+                if(response.res==1 && numero > 0){
+                    let monto1 = new Intl.NumberFormat('en-US',{  }).format(response.respapi.result.disbursedAmount);
+                    $('#prospecto_desembolso_monto').val(response.respapi.result.disbursedAmount);
+                    $('#jdamonto').html(monto1);
+
+                    $("#jdamonto").addClass("jdamonto-on");
+                    $("#registro_num_proceso_button").show();
+
+                }else if(response.res==2){
+                    $('#prospecto_desembolso_monto').val();
+                    $('#jdamonto').html("Número de Operación Inválida");
+                    $("#jdamonto").addClass("jdamonto-erro");
+                    $("#registro_num_proceso_button").hide();
+                }else{
+                    $('#jdamonto').html("Ocurrio un problema al momento de realizar la consulta.");
+                    $("#jdamonto").addClass("jdamonto-erro");
+                    $("#registro_num_proceso_button").hide();
+                }
+            }
+        });
+    }
+
+    var snippet_jda = function(){
+        //var jdamonto = $("#jdamonto");
+        var iniciar = function(){
+            //$("#prospecto_desembolso_monto").attr('type','hidden');
+            $("#registro_num_proceso_button").hide();
+        };
+        return {
+            init: function() {
+                iniciar();
+            }
+        };
+    }();
+    //== Class Initialization
+    jQuery(document).ready(function() {
+        snippet_jda.init();
+    });
 
 </script>
-
-
 <style>
     .jdamonto-on{
         background-color: rgba(227, 253, 235, 1);
@@ -430,7 +423,7 @@ jQuery(document).ready(function() {
             <div class="row">
 
                 <div class="col" style="text-align: center;">
-                    <?PHP if ($arrRespuesta[0]['registro_num_proceso'] !="" or $arrRespuesta[0]['registro_num_proceso']=='0') {?>
+                    <?PHP if ($arrRespuesta[0]['registro_num_proceso'] !="" && $arrRespuesta[0]['registro_num_proceso']!='0') {?>
                     <div id="resumen" class="resumen">
                         <strong>Número de Operación:</strong> <?PHP echo $arrRespuesta[0]['registro_num_proceso']?>
                         <br>
