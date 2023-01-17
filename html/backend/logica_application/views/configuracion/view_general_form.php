@@ -1844,19 +1844,7 @@
 
                 <table class="tablaresultados Mayuscula" style="width: 100%;" border="0">
 
-                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
-                    <tr class="<?php echo $strClase; ?>">
 
-                        <td style="width: 30%; font-weight: bold;">
-                            <?php echo $this->lang->line('conf_credit_autentication_uri'); ?>
-                            <span class="AyudaTooltip" data-balloon-length="medium" data-balloon=" <?php echo $this->lang->line('conf_credit_autentication_uri_ayuda'); ?>" data-balloon-pos="right"> </span>
-                        </td>
-
-                        <td style="width: 70%;">
-                            <?php echo $arrCajasHTML["conf_credit_autentication_uri"]; ?>
-                        </td>
-
-                    </tr>
                     <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
                     <tr class="<?php echo $strClase; ?>">
 

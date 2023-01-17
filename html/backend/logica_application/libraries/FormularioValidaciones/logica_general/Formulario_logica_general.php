@@ -1349,8 +1349,6 @@ class Formulario_logica_general {
         $this->formulario_campos->CargarOpcionesValidacion('conf_credit_nro_uri', LETRAS_NUMEROS, 'REQUERIDO|SINESPACIO', '?|#|.|:|_|-|/|\\');
         $arr_validacion['conf_credit_nro_uri'] = clone $this->formulario_campos;
 
-        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_autentication_uri', LETRAS_NUMEROS, 'REQUERIDO|SINESPACIO', '?|#|.|:|_|-|/|\\');
-        $arr_validacion['conf_credit_autentication_uri'] = clone $this->formulario_campos;
 
         $this->formulario_campos->CargarOpcionesValidacion('conf_credit_user', LETRAS_NUMEROS, 'REQUERIDO', '?|#|.|:|_|-|/|\\');
         $arr_validacion['conf_credit_user'] = clone $this->formulario_campos;

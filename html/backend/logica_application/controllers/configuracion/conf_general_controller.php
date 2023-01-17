@@ -338,8 +338,8 @@ class Conf_general_controller extends MY_Controller {
         $conf_credit_nro_uri = $this->input->post('conf_credit_nro_uri', TRUE);
         $conf_credit_nro_uri = str_replace(' ', '', $conf_credit_nro_uri);
 
-        $conf_credit_autentication_uri = $this->input->post('conf_credit_autentication_uri', TRUE);
-        $conf_credit_autentication_uri = str_replace(' ', '', $conf_credit_autentication_uri);
+        //$conf_credit_autentication_uri = $this->input->post('conf_credit_autentication_uri', TRUE);
+        //$conf_credit_autentication_uri = str_replace(' ', '', $conf_credit_autentication_uri);
 
         $conf_credit_client_id = $this->input->post('conf_credit_client_id', TRUE);
         $conf_credit_client_id = str_replace(' ', '', $conf_credit_client_id);
@@ -706,11 +706,7 @@ class Conf_general_controller extends MY_Controller {
             exit();
         }
 
-        if($conf_credit_autentication_uri == '')
-        {
-            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_autentication_uri'));
-            exit();
-        }
+
         if($conf_credit_user == '')
         {
             js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_user'));
@@ -847,7 +843,7 @@ class Conf_general_controller extends MY_Controller {
                 $conf_sms_permitido_txt_error,
 
                 //consulta de numero de tramite
-                $conf_credit_autentication_uri,
+
                 $conf_credit_nro_uri,
                 $conf_credit_client_id,
                 $conf_credit_type,
@@ -886,7 +882,7 @@ class Conf_general_controller extends MY_Controller {
         $conf_sms_name_plantilla = $this->input->post('conf_sms_name_plantilla', TRUE);
         $conf_sms_channelid = (int)$this->input->post('conf_sms_channelid', TRUE);
 
-        $conf_credit_autentication_uri = $this->input->post('conf_credit_autentication_uri', TRUE);
+
         $conf_credit_nro_uri = $this->input->post('conf_credit_nro_uri', TRUE);
         $conf_credit_client_id = $this->input->post('conf_credit_client_id', TRUE);
         $conf_credit_type = $this->input->post('conf_credit_type', TRUE);

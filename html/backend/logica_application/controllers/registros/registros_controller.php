@@ -1364,7 +1364,8 @@ class Registros_controller extends CI_Controller {
                     "capacidad_margen_ahorro" => $calculo_lead->margen_ahorro,
                     "onboarding" => $value["onboarding"],
                     "onboarding_codigo" => $value["onboarding_codigo"],
-                    "registro_num_proceso" => $value["prospecto_num_proceso"]
+                    "registro_num_proceso" => $value["prospecto_num_proceso"],
+                    "prospecto_desembolso_monto" => $value["prospecto_desembolso_monto"]
                 );
                 $lst_resultado[$i] = $item_valor;
 
@@ -1376,7 +1377,13 @@ class Registros_controller extends CI_Controller {
             js_error_div_javascript($this->lang->line('NoAutorizado'));
             exit();
         }
-        
+
+        /*
+        echo "<pre>";
+        print_r($lst_resultado);
+        echo "</pre>";
+        */
+
         // Listado de Versiones
         $arrVersiones = $this->mfunciones_logica->ObtenerListaVersiones($estructura_id, -1);
         $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrVersiones);
@@ -1464,11 +1471,9 @@ class Registros_controller extends CI_Controller {
         $sin_guardar = $this->input->post('sin_guardar', TRUE);
         
         switch ((int)$codigo_rubro) {
-            
             // Solicitud de Crédito
             case 6:
                 $this->load->model('mfunciones_microcreditos');
-                
                 $DatosSolCredito = $this->mfunciones_microcreditos->DatosSolicitudCreditoEmail($estructura_id);
                 
                 if(!isset($DatosSolCredito[0]))
@@ -1835,7 +1840,10 @@ class Registros_controller extends CI_Controller {
             {
                 // Si no es Solicitud de Crédito se carga el modelo para utilizar la función de validación del número de operación
                 $this->load->model('mfunciones_microcreditos');
-                
+                $prospecto_desembolso_monto = $this->input->post('prospecto_desembolso_monto', TRUE);
+
+                //echo $prospecto_desembolso_monto;exit;
+
                 if($tipo_registro == 'sol_numero_operacion')
                 {
                     $numero_operacion = $home_ant_sig;
@@ -1851,7 +1859,7 @@ class Registros_controller extends CI_Controller {
                     exit();
                 }
                 
-                $this->mfunciones_microcreditos->update_NroOperacion($tipo_registro, $estructura_id, $numero_operacion, $accion_usuario, $accion_fecha);
+                $this->mfunciones_microcreditos->update_NroOperacion($tipo_registro, $estructura_id, $numero_operacion, $accion_usuario, $accion_fecha,$prospecto_desembolso_monto);
                 
                 js_invocacion_javascript('$("div.modal-backdrop").remove(); Ajax_CargadoGeneralPagina("' . ($tipo_registro=='sol_numero_operacion' ? 'Sol_' : '') . 'Inicio", "divContenidoGeneral", "divErrorListaResultado", "SIN_FOCUS", "&estructura_id=' . $estructura_id . '");');
                 exit();
@@ -8541,7 +8549,6 @@ class Registros_controller extends CI_Controller {
 
         $api_credit = array();
         $api_credit["conf_credit_nro_uri"] = $arrConf["conf_credit_nro_uri"];
-        $api_credit["conf_credit_autentication_uri"] = $arrConf["conf_credit_autentication_uri"];
 
         $api_credit["conf_credit_client_id"] = $arrConf["conf_credit_client_id"];
         $api_credit["conf_credit_type"] = $arrConf["conf_credit_type"];
@@ -8581,7 +8588,6 @@ class Registros_controller extends CI_Controller {
             /**
              * recuperar token
              */
-
             $token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIwb1Q2Nm5kaUlKZklLNy1Nbk50cFlJQmpPYnVhdWlweExGbDJHdUhIeHFzIn0.eyJleHAiOjE2NzM2MzQ5MTQsImlhdCI6MTY3MzYzNDYxNCwianRpIjoiY2JlNzJkNWMtMTZkNy00YWQxLThmZTItY2MxZWQyNWMyNzhiIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLWtleWNsb2FrLWRldi5hcHBzLmRlc2FjbHVzdGVyLmJhbmNvZmllbGFiLmNvbS5iby9hdXRoL3JlYWxtcy9maWVkaWdpdGFsY3JlZGl0IiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIzNjNiMTIxLWZlNmYtNGQ3ZC05NTQwLTYzNjA2ODU0NTI1ZiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImRjLXVzZXItY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6ImZlMDc1ODhjLTc3Y2EtNDYxMy1iMmYwLWY2MThhZjk0ZTY0MyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLWZpZWRpZ2l0YWxjcmVkaXQiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJmZTA3NTg4Yy03N2NhLTQ2MTMtYjJmMC1mNjE4YWY5NGU2NDMiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGN1c2VyIn0.EViexk-6kFUUzwaQU09zJ8CImcLCv8Yp2TddIjT14fGUcAnIC73aDZBMBzsxdmR79e3tU5JrDwTPdGZC67cae90joq7iA7rifOI_oixPRDcBo4Bcg4dipNYFYN--mWHqxpk6PG5bpzP4CU6bys0ywDmroE-4VsYdB08m0_AhPQCWFuJhlnf92XV7wcD7-aTI3KimXUK7RFPNT2z_bpWcknm0ZG9EhtSAbv7fH8inM6_Ydfywfaonx20uNvZIfM3S8NTNmWBK1Yb4KPycimOL2aSFmkFhNDx_YmHIPxek6Y8j2nHydm-FxcZr43BelLVHSdcMQTQY55ASX20QbEOJYw";
             $accion_usuario = $_SESSION["session_informacion"]["login"];
             $codigo_usuario = $_SESSION["session_informacion"]["codigo"];

@@ -185,6 +185,8 @@ class Bandeja_controller extends MY_Controller {
                 $arrProspecto[0]['general_ci'] = $arrProspecto[0]["sol_ci"] . ' ' . $arrProspecto[0]["sol_complemento"] . ' ' . ((int)$arrProspecto[0]['sol_extension']==-1 ? '' : $this->mfunciones_generales->GetValorCatalogoDB($arrProspecto[0]['sol_extension'], 'cI_lugar_emisionoextension'));
                 $arrProspecto[0]['prospecto_consolidar_fecha'] = $arrProspecto[0]['sol_consolidado_fecha'];
                 $arrProspecto[0]['registro_num_proceso'] = $arrProspecto[0]['sol_num_proceso'];
+                $arrProspecto[0]['prospecto_desembolso_monto'] = $arrProspecto[0]['prospecto_desembolso_monto'];
+
 
                 break;
 
@@ -192,6 +194,11 @@ class Bandeja_controller extends MY_Controller {
 
                 // Datos del Prospecto
                 $arrProspecto = $this->mfunciones_logica->ObtenerInfoProspecto($codigo);
+                /*
+                echo "<pre>";
+                print_r($arrProspecto);
+                echo "</pre>";
+                */
                 $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrProspecto);
 
                 $arrProspecto[0]['registro_num_proceso'] = $arrProspecto[0]['prospecto_num_proceso'];
@@ -230,7 +237,6 @@ class Bandeja_controller extends MY_Controller {
         $data["arrRespuesta"] = $arrProspecto;
         $data["codigo_tipo_persona"] = $codigo_tipo_persona;
         $data["strValidacionJqValidate"] = $this->formulario_logica_general->GeneraValidacionJavaScript();
-        //log_message('ERROR',json_encode($data['arrRespuesta'][0], 1));
         $this->load->view('bandeja_verificacion_requisitos/view_jda_evaluacion', $data);
     }
 
@@ -247,10 +253,10 @@ class Bandeja_controller extends MY_Controller {
         }*/
 
         $codigo_prospecto = $this->input->post('estructura_id', TRUE);
-        $registro_num_proceso = (int)$this->input->post('registro_num_proceso', TRUE);
+        //$registro_num_proceso = (int)$this->input->post('registro_num_proceso', TRUE);
         $prospecto_jda_eval = $this->input->post('prospecto_jda_eval', TRUE);
         $prospecto_jda_eval_texto = htmlspecialchars($this->input->post('prospecto_jda_eval_texto', TRUE));
-        $prospecto_desembolso_monto = $this->input->post('prospecto_desembolso_monto', true);
+        //$prospecto_desembolso_monto = $this->input->post('prospecto_desembolso_monto', true);
 
         $codigo_tipo_persona = $this->input->post('codigo_tipo_persona', TRUE);
 
@@ -266,17 +272,13 @@ class Bandeja_controller extends MY_Controller {
             exit();
         }
 
+        /*
         if($this->mfunciones_microcreditos->ValidarNumOperacion($registro_num_proceso))
         {
             js_error_div_javascript($this->lang->line('registro_num_proceso_error'));
             exit();
         }
-
-        /*if((int)$prospecto_desembolso_monto < 1)
-        {
-            js_error_div_javascript('Debe registrar el ' . $this->lang->line('prospecto_desembolso_monto'));
-            exit();
-        }*/
+        */
 
         $accion_usuario = $_SESSION["session_informacion"]["login"];
         $codigo_usuario = $_SESSION["session_informacion"]["codigo"];
@@ -299,12 +301,14 @@ class Bandeja_controller extends MY_Controller {
                 break;
 
             default:
+
                 /***** REGIONALIZACIÓN: Valida si el prospecto pertenece a la región ******/
-            /*    if(!$this->mfunciones_generales->VerificaProspectoRegion($codigo_prospecto))
+                if(!$this->mfunciones_generales->VerificaProspectoRegion($codigo_prospecto))
                 {
                     js_error_div_javascript($this->lang->line('regionaliza_NoRegion'));
                     exit();
-                }*/
+                }
+
                 $arrResultado3 = $this->mfunciones_logica->VerificaProspectoConsolidado($codigo_prospecto);
                 $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrResultado3);
 
@@ -316,7 +320,7 @@ class Bandeja_controller extends MY_Controller {
 
                 // PASO 2: Se actualiza la evaluación del JDA
 
-                $this->mfunciones_microcreditos->update_JDA_Eval($codigo_prospecto, $registro_num_proceso, $prospecto_jda_eval, $prospecto_jda_eval_texto, $codigo_usuario, $accion_usuario, $accion_fecha);
+                $this->mfunciones_microcreditos->update_JDA_Eval($codigo_prospecto, $prospecto_jda_eval, $prospecto_jda_eval_texto, $codigo_usuario, $accion_usuario, $accion_fecha);
                 if((int)$prospecto_jda_eval != 99)
                 {
                     // Aprobar o Rechazar
@@ -327,7 +331,7 @@ class Bandeja_controller extends MY_Controller {
                     $this->mfunciones_logica->InsertSeguimientoProspecto($codigo_prospecto, ((int)$prospecto_jda_eval==1 ? 22 : 23), 13, 'JDA Evaluación: ' . $this->mfunciones_generales->GetValorCatalogo($prospecto_jda_eval, 'prospecto_evaluacion') . '.' . ((int)$prospecto_jda_eval==2 ? ' Fin del Flujo.' : ''), $accion_usuario, $accion_fecha);
 
                     /** Desembolso cobis updated**/
-                    $this->mfunciones_microcreditos->update_DesembCOBIS_Sol($codigo_prospecto, $prospecto_desembolso_monto, $codigo_usuario, $accion_usuario, $accion_fecha);
+                    //$this->mfunciones_microcreditos->update_DesembCOBIS_Sol($codigo_prospecto, $prospecto_desembolso_monto, $codigo_usuario, $accion_usuario, $accion_fecha);
 
                 }
                 else
@@ -335,9 +339,6 @@ class Bandeja_controller extends MY_Controller {
                     // Observar y Devolver al Oficial de Negocios
 
                     // INSERTAR EN LA TABLA OBSERVACION_DOCUMENTO
-
-                    log_message('error', '111111');
-
                     switch ((int)$codigo_tipo_persona) {
                         case 6:
 
@@ -358,9 +359,7 @@ class Bandeja_controller extends MY_Controller {
                     // REMITIR OBSERVACIÓN
 
                     switch ((int)$codigo_tipo_persona) {
-
                         case 6:
-                            log_message('error', '1111123331222');
 
                             // Solicitud de Crédito
                             $this->load->model('mfunciones_microcreditos');
@@ -408,7 +407,6 @@ class Bandeja_controller extends MY_Controller {
 
                             $arrResultado = $this->mfunciones_logica->ObtenerDocumentosDigitalizar($codigo_prospecto);
                             $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrResultado);
-                            log_message('error', '11111122322');
 
                             if (isset($arrResultado[0]))
                             {
@@ -476,7 +474,7 @@ class Bandeja_controller extends MY_Controller {
 
         $api_credit = array();
         $api_credit["conf_credit_nro_uri"] = $arrConf["conf_credit_nro_uri"];
-        $api_credit["conf_credit_autentication_uri"] = $arrConf["conf_credit_autentication_uri"];
+        //$api_credit["conf_credit_autentication_uri"] = $arrConf["conf_credit_autentication_uri"];
 
         $api_credit["conf_credit_client_id"] = $arrConf["conf_credit_client_id"];
         $api_credit["conf_credit_type"] = $arrConf["conf_credit_type"];
@@ -663,6 +661,11 @@ class Bandeja_controller extends MY_Controller {
 
                 // Datos del Prospecto
                 $arrProspecto = $this->mfunciones_logica->ObtenerInfoProspecto($codigo);
+                /*
+                echo "<pre>";
+                print_r($arrProspecto);
+                echo "</pre>";
+                */
                 $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrProspecto);
 
                 $arrProspecto[0]['registro_num_proceso'] = $arrProspecto[0]['prospecto_num_proceso'];
@@ -704,6 +707,7 @@ class Bandeja_controller extends MY_Controller {
         $this->load->model('mfunciones_generales');
         $this->load->model('mfunciones_logica');
         $this->load->model('mfunciones_microcreditos');
+
 
         if(!isset($_POST['estructura_id']))
         {
@@ -774,7 +778,8 @@ class Bandeja_controller extends MY_Controller {
                     exit();
                 }
 
-                $this->mfunciones_microcreditos->update_DesembCOBIS($codigo_prospecto, $prospecto_desembolso_monto, $codigo_usuario, $accion_usuario, $accion_fecha);
+                //$this->mfunciones_microcreditos->update_DesembCOBIS($codigo_prospecto, $prospecto_desembolso_monto, $codigo_usuario, $accion_usuario, $accion_fecha);
+                $this->mfunciones_microcreditos->update_DesembCOBIS($codigo_prospecto, $codigo_usuario, $accion_usuario, $accion_fecha);
 
                 $this->mfunciones_generales->SeguimientoHitoProspecto($codigo_prospecto, 24, $arrResultado3[0]['prospecto_etapa'], $accion_usuario, $accion_fecha, 2);
                 /***  REGISTRAR SEGUIMIENTO ***/

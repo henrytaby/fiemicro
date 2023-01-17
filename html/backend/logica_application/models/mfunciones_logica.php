@@ -5011,7 +5011,6 @@ class Mfunciones_logica extends CI_Model {
             $conf_sms_onb_ambiente,
             $conf_sms_permitido_txt_error,
 
-            $conf_credit_autentication_uri,
             $conf_credit_nro_uri,
             $conf_credit_client_id,
             $conf_credit_type,
@@ -5091,7 +5090,7 @@ class Mfunciones_logica extends CI_Model {
                 conf_sms_onb_ambiente=?,
                 conf_sms_permitido_txt_error=?,
                 
-                conf_credit_autentication_uri=?,
+
                 conf_credit_nro_uri=?,
                 conf_credit_client_id=?,
                 conf_credit_type=?,
@@ -5180,7 +5179,6 @@ class Mfunciones_logica extends CI_Model {
                 $conf_sms_onb_ambiente,
                 $conf_sms_permitido_txt_error,
 
-                $conf_credit_autentication_uri,
                 $conf_credit_nro_uri,
                 $conf_credit_client_id,
                 $conf_credit_type,
@@ -9591,11 +9589,11 @@ class Mfunciones_logica extends CI_Model {
         {
             if($prospecto_id == -1)
             {
-                $sql = "SELECT onboarding, onboarding_codigo, prospecto_evaluacion, prospecto_id, ejecutivo_id, tipo_persona_id, camp_id, prospecto_consolidado, prospecto_ultimo_paso, general_categoria, general_depende, general_solicitante, general_ci, general_ci_extension, general_telefono, prospecto_principal, prospecto_num_proceso FROM prospecto WHERE prospecto_activo=$activo ORDER BY prospecto_id ASC ";
+                $sql = "SELECT onboarding, onboarding_codigo, prospecto_evaluacion, prospecto_id, ejecutivo_id, tipo_persona_id, camp_id, prospecto_consolidado, prospecto_ultimo_paso, general_categoria, general_depende, general_solicitante, general_ci, general_ci_extension, general_telefono, prospecto_principal, prospecto_num_proceso, prospecto_desembolso_monto FROM prospecto WHERE prospecto_activo=$activo ORDER BY prospecto_id ASC ";
             }
             else
             {
-                $sql = "SELECT onboarding, onboarding_codigo, prospecto_evaluacion, prospecto_id, ejecutivo_id, tipo_persona_id, camp_id, prospecto_consolidado, prospecto_ultimo_paso, general_categoria, general_depende, general_solicitante, general_ci, general_ci_extension, general_telefono, prospecto_principal, prospecto_num_proceso FROM prospecto WHERE prospecto_activo=$activo AND (prospecto_id=? OR general_depende=?) ORDER BY prospecto_id ASC ";
+                $sql = "SELECT onboarding, onboarding_codigo, prospecto_evaluacion, prospecto_id, ejecutivo_id, tipo_persona_id, camp_id, prospecto_consolidado, prospecto_ultimo_paso, general_categoria, general_depende, general_solicitante, general_ci, general_ci_extension, general_telefono, prospecto_principal, prospecto_num_proceso, prospecto_desembolso_monto FROM prospecto WHERE prospecto_activo=$activo AND (prospecto_id=? OR general_depende=?) ORDER BY prospecto_id ASC ";
             }
             
             $consulta = $this->db->query($sql, array($prospecto_id, $prospecto_id));

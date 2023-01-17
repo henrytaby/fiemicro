@@ -2715,9 +2715,7 @@ $lang["detail_register_subtitle_ad"] = "auditoria_params: Parámetros enviados |
 
 // CONSULTA NUMERO DE CRÉDITO
 $lang["conf_credit_nro_uri"] = "URI WS CREDIT";
-$lang["conf_credit_autentication_uri"] = "URI WS CREDIT AUTENTICATION";
 $lang["conf_credit_nro_uri_ayuda"] = "Registre la URI del Web Service. Puede testear la conexión, previamente debe registrar los parámetros por defecto e indicar un número celular para la prueba. ";
-$lang["conf_credit_autentication_uri_ayuda"] = "Registre la URI del Web Service para la autenticación. Puede testear la conexión, previamente debe registrar los parámetros por defecto e indicar un número celular para la prueba. ";
 $lang["conf_credit_client_id"] = "ID DEL CLIENTE ";
 $lang["conf_credit_type"] = "TIPO ";
 $lang["conf_credit_scope"] = "ALCANCE ";

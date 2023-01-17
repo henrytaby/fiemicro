@@ -3,7 +3,8 @@
     $estructura_id = $arrRespuesta[0]['prospecto_id'];
     $vista_actual = $arrRespuesta[0]['prospecto_ultimo_paso'];
     $codigo_rubro = $arrRespuesta[0]['camp_id'];
-    $codigo_evaluacion = $arrRespuesta[0]['prospecto_evaluacion'];
+    $codigo_rubro = $arrRespuesta[0]['camp_id'];
+    $prospecto_desembolso_monto = $arrRespuesta[0]['prospecto_desembolso_monto'];
 ?>
 
     $(document).ready(function(){ 
@@ -25,7 +26,9 @@
 
     });
     
-    $('#registro_num_proceso').on('keyup change', function(){
+    //$('#registro_num_proceso').on('keyup change', function(){
+    $('#registro_num_proceso').on('keyup', function(){
+    //$('#registro_num_proceso').change(function(){
         check_registro_num_proceso();
     });
     
@@ -55,9 +58,6 @@
             $('#registro_num_proceso_label_error').show();
         }
     }
-    
-    check_registro_num_proceso();
-
 
 function check_credit_validation(codigo_operacion) {
     let baseUri = '/Registros/Principal/jsonope';
@@ -82,6 +82,7 @@ function check_credit_validation(codigo_operacion) {
                 let monto1 = new Intl.NumberFormat('en-US',{  }).format(response.respapi.result.disbursedAmount);
                 $('#prospecto_desembolso_monto').val(response.respapi.result.disbursedAmount);
                 $('#jdamonto').html(monto1);
+
                 $("#jdamonto").addClass("jdamonto-on");
                 $("#registro_num_proceso_button").show();
 
@@ -106,6 +107,8 @@ function check_credit_validation(codigo_operacion) {
         var sin_guardar = 1;
 
         var strParametros = "&estructura_id=" + estructura_id + "&codigo_rubro=" + codigo_rubro + "&vista_actual=" + vista_actual + "&home_ant_sig=" + home_ant_sig + "&sin_guardar=" + sin_guardar + "&tipo_registro=" + tipo_registro;
+        strParametros += "&prospecto_desembolso_monto="+$("#prospecto_desembolso_monto").val();
+
         Ajax_CargadoGeneralPagina("../Pasos/Guardar", "divContenidoGeneral", "divErrorBusqueda", "SIN_FOCUS", strParametros);
     }
     
@@ -138,8 +141,7 @@ function check_credit_validation(codigo_operacion) {
         
         $("#pregunta_opcion").val("numero_operacion");
         $("#div_num_operacion").modal();
-        
-        check_registro_num_proceso();
+
     }
     
     function RealizaAccion(criterio=0)
@@ -250,10 +252,10 @@ jQuery(document).ready(function() {
         font-size: 13px;
         border-radius: 7px;
     }
-    .msgapi{
+    .resumen{
         background-color: #fcf8e3;
         border: 1px solid #b1a181;
-        width: 75%;
+        width: 100%;
         font-size: 15px !important;
         color: #846d3e;
         border-radius: 7px;
@@ -426,7 +428,15 @@ jQuery(document).ready(function() {
             <br />
             
             <div class="row">
+
                 <div class="col" style="text-align: center;">
+                    <?PHP if ($arrRespuesta[0]['registro_num_proceso'] !="" or $arrRespuesta[0]['registro_num_proceso']=='0') {?>
+                    <div id="resumen" class="resumen">
+                        <strong>Número de Operación:</strong> <?PHP echo $arrRespuesta[0]['registro_num_proceso']?>
+                        <br>
+                        <strong>Monto :</strong> <?PHP echo number_format($arrRespuesta[0]['prospecto_desembolso_monto'], 2, '.', ',');?>
+                    </div>
+                    <?PHP }?>
                     <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-radius: 0px !important; padding: 5px 0px !important; width: 90% !important; font-size: 13px; height: 35px;" onclick="VerNumOperacion();"> <?php echo $this->lang->line('registro_num_proceso_button'); ?> </button>
                 </div>
             </div>
@@ -783,8 +793,11 @@ if($arrRespuesta[0]['onboarding'] == 0)
                             </td>
 
                             <td style="width: 70%;">
-                                <?php echo $arrCajasHTML["prospecto_desembolso_monto"]; ?>
-                                <div id="jdamonto" class="jdamonto-off">0.0</div>
+                                <?php //echo $arrCajasHTML["prospecto_desembolso_monto"]; ?>
+                                <input type="hidden" name="prospecto_desembolso_monto" id="prospecto_desembolso_monto" value="<?PHP echo $arrRespuesta[0]['prospecto_desembolso_monto']?>">
+                                <div id="jdamonto" class="jdamonto-off">
+                                    <?PHP echo number_format($arrRespuesta[0]['prospecto_desembolso_monto'], 2, '.', ',');?>
+                                </div>
                             </td>
                         </tr>
                     </table>

@@ -39,10 +39,69 @@
         }
         
         $('#prospecto_desembolso_monto').val(monto);
-    }   
+    }
 
+
+var snippet_jda = function(){
+
+    var iniciar = function(){
+        $("#prospecto_desembolso_monto").attr('type','hidden');
+        $("#prospecto_desembolso_monto").val(<?PHP echo $arrRespuesta[0]['prospecto_desembolso_monto']?>);
+
+    };
+    return {
+        init: function() {
+            iniciar();
+        }
+    };
+}();
+
+//== Class Initialization
+jQuery(document).ready(function() {
+    snippet_jda.init();
+});
 </script>
 
+<style>
+    .jdamonto-on{
+        background-color: rgba(227, 253, 235, 1);
+        border: 1px solid #578b58;
+        color: rgba(60, 118, 61, 1);
+        padding: 6px;
+        text-align: right;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .jdamonto-off{
+        background-color: #f7f7f7;
+        border: 1px solid #a7a7a7;
+        color: #777777;
+        padding: 6px;
+        text-align: right;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .jdamonto-erro{
+        background-color: #f8d7da;
+        border: 1px solid #dc3545;
+        color: #975057;
+        padding: 6px;
+        text-align: right;
+        font-size: 13px;
+        border-radius: 7px;
+    }
+    .msgapi{
+        background-color: #fcf8e3;
+        border: 1px solid #b1a181;
+        width: 75%;
+        font-size: 15px !important;
+        color: #846d3e;
+        border-radius: 7px;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+</style>
 <div id="divVistaMenuPantalla" align="center">
 
     <div id="divCargarFormulario" class="TamanoContenidoGeneral">
@@ -251,7 +310,9 @@
                 <tr class="<?php echo $strClase; ?>">
                     <td style="width: 30%; font-weight: bold;">
                         <?php echo $this->lang->line('sol_monto'); ?>
+                        <!--
                         <span style="text-shadow: 0 0 black;" class="AyudaTooltip" data-balloon-length="medium" data-balloon="El monto que se muestra, así como la moneda, son los que fueron registrados y aprobados en la Solicitud de Crédito. Puede utilizar el valor registrado para el monto de desembolso COBIS con la opción “Seleccionar” que se encuentra al lado del valor. <?php echo ($sol_cred->sol_moneda=='usd' ? 'Se muestran 2 valores debido a que la moneda seleccionada para la Solicitud de Crédito fue dólares: el monto registrado en esta moneda y también la conversión a bolivianos con el tipo de cambio registrados en el sistema.' : ''); ?>" data-balloon-pos="right"> </span>
+                        -->
                     </td>
 
                     <td style="width: 70%; font-weight: bold;">
@@ -259,10 +320,11 @@
                         <div align="left" class="col-sm-5" <?php echo ($sol_cred->sol_moneda=='usd' ? 'style="text-align: center;"' : ''); ?>>
 
                             <?php echo $this->mfunciones_microcreditos->GetValorCatalogo($sol_cred->sol_moneda, 'sol_moneda') . ' ' . number_format($sol_cred->sol_monto, 2, '.', ','); ?>
-
+                            <!--
                             <span class="EnlaceSimple" onclick="UseAmount(<?php echo $sol_cred->sol_monto; ?>)">
                                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Seleccionar 
                             </span>
+                            -->
 
                         </div>
 
@@ -285,9 +347,11 @@
                                     echo $this->mfunciones_microcreditos->GetValorCatalogo('bob', 'sol_moneda') . ' ' . number_format($monto_bs, 2, '.', ',');
                                 ?>
 
+                                <!--
                                 <span class="EnlaceSimple" onclick="UseAmount(<?php echo $monto_bs; ?>)">
                                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Seleccionar 
                                 </span>
+                                -->
                                 
                             </div>
 
@@ -310,7 +374,8 @@
                     <?php echo $this->lang->line('prospecto_desembolso_monto'); ?>
                 </td>
 
-                <td style="width: 70%;">                
+                <td style="width: 70%;">
+                    <div id="jdamonto" class="jdamonto-on"><?php echo number_format($arrRespuesta[0]['prospecto_desembolso_monto'], 2, '.', ',');?></div>
                     <?php echo $arrCajasHTML["prospecto_desembolso_monto"]; ?>
                 </td>
             </tr>

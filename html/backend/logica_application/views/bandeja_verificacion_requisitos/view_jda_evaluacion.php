@@ -7,7 +7,8 @@
     $("#divCargarFormulario").show();
     $("#confirmacion").hide();
 
-    function MostrarConfirmación() {
+    function MostrarConfirmación()
+    {
         switch ($("#prospecto_jda_eval").val()) {
             case "1":
                 $("#jda_eval_valor").html('"<u>APROBADO</u>", se habilitará la opción "Desembolso COBIS" para el registro.');
@@ -30,13 +31,15 @@
         $("#confirmacion").fadeIn(500);
     }
 
-    function OcultarConfirmación() {
+    function OcultarConfirmación()
+    {
         $("#divCargarFormulario").fadeIn(500);
         $("#confirmacion").hide();
     }
 
     <?php
-    if ((int)$codigo_tipo_persona != 6) {
+    if ((int)$codigo_tipo_persona != 6)
+    {
         echo '  $(document).ready(function(){
                     $("#prospecto_jda_eval").append($("<option>", {
                         value: 99,
@@ -47,78 +50,12 @@
     ?>
 
     $('#registro_num_proceso').on('click', function () {
-        if ($(this).val() == 0) {
+        if ($(this).val() == 0)
+        {
             $(this).select();
         }
     });
 
-
-    $('#registro_num_proceso').on('input', function () {
-        check_registro_num_proceso();
-    });
-
-
-    function check_credit_validation(codigo_operacion) {
-        let baseUri = '/Bandeja/JDAEval/jsonope';
-        let documento_del_cliente = <?php echo $arrRespuesta[0]['prospecto_id']?>;
-        let id_del_cliente =  <?php echo $arrRespuesta[0]['general_ci'] . $arrRespuesta[0]['general_ci_extension']?>;
-
-        $.ajax({
-            url: `${baseUri}`,
-            type: 'get',
-            data: {
-                customerDocumentNumber: documento_del_cliente,
-                id: id_del_cliente,
-                creditOperation: codigo_operacion,
-            },
-            dataType: 'json',
-            success: function (response) {
-                $("#jdamonto").removeClass("jdamonto-off");
-                $("#jdamonto").removeClass("jdamonto-on");
-                $("#jdamonto").removeClass("jdamonto-erro");
-
-                if(response.res==1){
-                    let monto1 = new Intl.NumberFormat('en-US',{  }).format(response.respapi.result.disbursedAmount);
-                    $('#prospecto_desembolso_monto').val(response.respapi.result.disbursedAmount);
-                    $('#jdamonto').html(monto1);
-                    $("#jdamonto").addClass("jdamonto-on");
-                    $("#btn_confirmacion").show();
-
-                }else if(response.res==2){
-                    $('#prospecto_desembolso_monto').val();
-                    $('#jdamonto').html("Número de Operación Inválida");
-                    $("#jdamonto").addClass("jdamonto-erro");
-                    $("#btn_confirmacion").hide();
-                }else{
-                    $('#jdamonto').html("Ocurrio un problema al momento de realizar la consulta.");
-                    $("#jdamonto").addClass("jdamonto-erro");
-                    $("#btn_confirmacion").hide();
-                }
-            }
-        });
-    }
-
-    function check_registro_num_proceso() {
-        var valor = parseInt($("#registro_num_proceso").val() || 0);
-        valor = valor.toString();
-
-        $("#jdamonto").addClass("jdamonto-off");
-        $("#jdamonto").removeClass("jdamonto-on");
-        $('#prospecto_desembolso_monto').val(0);
-        //$("#btn_confirmacion").hide();
-        $('#jdamonto').html(0);
-
-        if (!(/[^0-9]/.test(valor) || valor.length != <?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>)) {
-            check_credit_validation(valor);
-            $('#registro_num_proceso_label_error').hide();
-            $('#registro_num_proceso_label_ok').show();
-        } else {
-            $('#registro_num_proceso_label_ok').hide();
-            $('#registro_num_proceso_label_error').show();
-
-
-        }
-    }
 
     $('#prospecto_jda_eval').on('change', function () {
         let commentRow = $('.FilaBlanca').last();
@@ -137,6 +74,9 @@
         }
     })
 
+
+
+
     function firstCharge() {
         let row = $('.FilaBlanca').last();
 
@@ -149,13 +89,13 @@
     }
 
     firstCharge();
-    check_registro_num_proceso();
 
 
     var snippet_jda = function(){
         var jdamonto = $("#jdamonto");
         var iniciar = function(){
             $("#prospecto_desembolso_monto").attr('type','hidden');
+            $("#registro_num_proceso").attr('disabled','disabled');
             //$("#btn_confirmacion").hide();
         };
         return {
@@ -361,8 +301,7 @@
                     </td>
 
                     <td style="width: 70%;">
-                        <?php echo $arrCajasHTML["prospecto_desembolso_monto"]; ?>
-                        <div id="jdamonto" class="jdamonto-off">0.0</div>
+                        <div id="jdamonto" class="jdamonto-on"><?php echo number_format($arrRespuesta[0]['prospecto_desembolso_monto'], 2, '.', ',');?></div>
                     </td>
                 </tr>
 

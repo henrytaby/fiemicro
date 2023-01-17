@@ -5220,23 +5220,18 @@ class Mfunciones_microcreditos extends CI_Model {
     
     /*************** ESTUDIO DE CREDITO - INICIO ****************************/
     
-    function update_JDA_Eval($codigo_prospecto, $registro_num_proceso, $prospecto_jda_eval, $prospecto_jda_eval_texto, $prospecto_jda_eval_usuario, $accion_usuario, $accion_fecha)
+    function update_JDA_Eval($codigo_prospecto,  $prospecto_jda_eval, $prospecto_jda_eval_texto, $prospecto_jda_eval_usuario, $accion_usuario, $accion_fecha)
     {
         try {
-            
             $sql = "UPDATE prospecto SET
-                
-                        prospecto_num_proceso=?,
                         prospecto_jda_eval=?,
                         prospecto_jda_eval_texto=?,
                         prospecto_jda_eval_usuario=?,
                         prospecto_jda_eval_fecha=?,
                         accion_usuario=?,
-                        accion_fecha=?
-                        
+                        accion_fecha=?                        
                     WHERE prospecto_id = ?";
-
-            $this->db->query($sql, array($registro_num_proceso, $prospecto_jda_eval, $prospecto_jda_eval_texto, $prospecto_jda_eval_usuario, $accion_fecha, $accion_usuario, $accion_fecha, $codigo_prospecto));
+            $this->db->query($sql, array( $prospecto_jda_eval, $prospecto_jda_eval_texto, $prospecto_jda_eval_usuario, $accion_fecha, $accion_usuario, $accion_fecha, $codigo_prospecto));
 
             return TRUE;
             
@@ -5277,14 +5272,12 @@ class Mfunciones_microcreditos extends CI_Model {
         }
     }
     
-    function update_DesembCOBIS($codigo_prospecto, $prospecto_desembolso_monto, $codigo_usuario, $accion_usuario, $accion_fecha)
+    function update_DesembCOBIS($codigo_prospecto,  $codigo_usuario, $accion_usuario, $accion_fecha)
     {
         try {
             
             $sql = "UPDATE prospecto SET
-                
                         prospecto_desembolso=?,
-                        prospecto_desembolso_monto=?,
                         prospecto_desembolso_usuario=?,
                         prospecto_desembolso_fecha=?,
                         accion_usuario=?,
@@ -5292,7 +5285,7 @@ class Mfunciones_microcreditos extends CI_Model {
                         
                     WHERE prospecto_id = ?";
 
-            $this->db->query($sql, array(1, $prospecto_desembolso_monto, $codigo_usuario, $accion_fecha, $accion_usuario, $accion_fecha, $codigo_prospecto));
+            $this->db->query(   $sql, array(1, $codigo_usuario, $accion_fecha, $accion_usuario, $accion_fecha, $codigo_prospecto));
 
             return TRUE;
         } 
@@ -5391,20 +5384,21 @@ class Mfunciones_microcreditos extends CI_Model {
         return $listaResultados;
     }
     
-    function update_NroOperacion($tipo, $codigo_registro, $numero_operacion, $accion_usuario, $accion_fecha)
+    function update_NroOperacion($tipo, $codigo_registro, $numero_operacion, $accion_usuario, $accion_fecha, $prospecto_desembolso_monto="")
     {        
         try 
         {
             if($tipo == 'numero_operacion')
             {
-                $sql = "UPDATE prospecto SET prospecto_num_proceso=?, accion_usuario=?, accion_fecha=? WHERE prospecto_id=? ";
+                $sql = "UPDATE prospecto SET prospecto_num_proceso=?, accion_usuario=?, accion_fecha=?, prospecto_desembolso_monto=? WHERE prospecto_id=? ";
+                $consulta = $this->db->query($sql, array((int)$numero_operacion, $accion_usuario, $accion_fecha,$prospecto_desembolso_monto,$codigo_registro));
             }
             else
             {
                 $sql = "UPDATE solicitud_credito SET sol_num_proceso=?, accion_usuario=?, accion_fecha=? WHERE sol_id=? ";
+                $consulta = $this->db->query($sql, array((int)$numero_operacion, $accion_usuario, $accion_fecha, $codigo_registro));
             }
-            
-            $consulta = $this->db->query($sql, array((int)$numero_operacion, $accion_usuario, $accion_fecha, $codigo_registro));
+
         } 
         catch (Exception $e) 
         {
