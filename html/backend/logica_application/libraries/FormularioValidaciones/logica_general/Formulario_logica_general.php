@@ -1349,22 +1349,6 @@ class Formulario_logica_general {
         $this->formulario_campos->CargarOpcionesValidacion('conf_credit_nro_uri', LETRAS_NUMEROS, 'REQUERIDO|SINESPACIO', '?|#|.|:|_|-|/|\\');
         $arr_validacion['conf_credit_nro_uri'] = clone $this->formulario_campos;
 
-
-        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_user', LETRAS_NUMEROS, 'REQUERIDO', '?|#|.|:|_|-|/|\\');
-        $arr_validacion['conf_credit_user'] = clone $this->formulario_campos;
-
-        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_password', LETRAS_NUMEROS, 'REQUERIDO', '?|#|.|:|_|-|/|\\');
-        $arr_validacion['conf_credit_password'] = clone $this->formulario_campos;
-
-        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_client_id', LETRAS_NUMEROS, 'MAX(145)', '?|#|.|:|_|-|/|\\');
-        $arr_validacion["conf_credit_client_id"] = clone $this->formulario_campos;
-        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_type', LETRAS_NUMEROS, 'MAX(145)', '?|#|.|:|_|-|/|\\');
-        $arr_validacion["conf_credit_type"] = clone $this->formulario_campos;
-        $this->formulario_campos->CargarOpcionesValidacion('conf_credit_scope', LETRAS_NUMEROS, 'MAX(145)', '?|#|.|:|_|-|/|\\');
-        $arr_validacion["conf_credit_scope"] = clone $this->formulario_campos;
-
-
-
         // FORMULARIOS FIE - FIN
         $this->arr_validacion = $arr_validacion;
     }

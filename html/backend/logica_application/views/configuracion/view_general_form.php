@@ -149,11 +149,6 @@
             "&conf_ad_test_pass=" + $("#conf_ad_test_pass").val() + 
             "&conf_sms_name_plantilla=" + $("#conf_sms_name_plantilla").val() + 
             "&conf_credit_nro_uri=" + $("#conf_credit_nro_uri").val() +
-            "&conf_credit_client_id=" + $("#conf_credit_client_id").val() +
-            "&conf_credit_type=" + $("#conf_credit_type").val() +
-            "&conf_credit_scope=" + $("#conf_credit_scope").val() +
-            "&conf_credit_user=" + $("#conf_credit_user").val() +
-            "&conf_credit_password=" + $("#conf_credit_password").val() +
             "&conf_sms_channelid=" + $("#conf_sms_channelid").val() +
             "&sms_cel_test=" + $("#sms_cel_test").val();
     
@@ -1857,61 +1852,6 @@
                             <?php echo $arrCajasHTML["conf_credit_nro_uri"]; ?>
                         </td>
 
-                    </tr>
-
-
-                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
-                    <tr class="<?php echo $strClase; ?>">
-                        <td style="width: 30%; font-weight: bold;">
-                            <?php echo $this->lang->line('conf_credit_client_id'); ?>
-                        </td>
-                        <td style="width: 70%;">
-                            <?php echo $arrCajasHTML["conf_credit_client_id"]; ?>
-                        </td>
-                    </tr>
-
-
-                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
-                    <tr class="<?php echo $strClase; ?>">
-                        <td style="width: 30%; font-weight: bold;">
-                            <?php echo $this->lang->line('conf_credit_type'); ?>
-                        </td>
-                        <td style="width: 70%;">
-                            <?php echo $arrCajasHTML["conf_credit_type"]; ?>
-                        </td>
-                    </tr>
-
-
-                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
-                    <tr class="<?php echo $strClase; ?>">
-                        <td style="width: 30%; font-weight: bold;">
-                            <?php echo $this->lang->line('conf_credit_scope'); ?>
-                        </td>
-                        <td style="width: 70%;">
-                            <?php echo $arrCajasHTML["conf_credit_scope"]; ?>
-                        </td>
-                    </tr>
-
-
-                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
-                    <tr class="<?php echo $strClase; ?>">
-                        <td style="width: 30%; font-weight: bold;">
-                            <?php echo $this->lang->line('conf_credit_user'); ?>
-                        </td>
-                        <td style="width: 70%;">
-                            <?php echo $arrCajasHTML["conf_credit_user"]; ?>
-                        </td>
-                    </tr>
-
-
-                    <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
-                    <tr class="<?php echo $strClase; ?>">
-                        <td style="width: 30%; font-weight: bold;">
-                            <?php echo $this->lang->line('conf_credit_password'); ?>
-                        </td>
-                        <td style="width: 70%;">
-                            <?php echo $arrCajasHTML["conf_credit_password"]; ?>
-                        </td>
                     </tr>
 
                 </table>

@@ -5012,11 +5012,6 @@ class Mfunciones_logica extends CI_Model {
             $conf_sms_permitido_txt_error,
 
             $conf_credit_nro_uri,
-            $conf_credit_client_id,
-            $conf_credit_type,
-            $conf_credit_scope,
-            $conf_credit_user,
-            $conf_credit_password,
 
             $fecha_actual, $nombre_usuario, $conf_credenciales_id)
     {        
@@ -5090,16 +5085,9 @@ class Mfunciones_logica extends CI_Model {
                 conf_sms_onb_ambiente=?,
                 conf_sms_permitido_txt_error=?,
                 
-
                 conf_credit_nro_uri=?,
-                conf_credit_client_id=?,
-                conf_credit_type=?,
-                conf_credit_scope=?,
-                conf_credit_user=?,
-                conf_credit_password=?,
-                
 
-                accion_usuario=?, accion_fecha=? WHERE conf_general_id=? "; 
+                accion_usuario=?, accion_fecha=? WHERE conf_general_id=? ";
 
             $consulta = $this->db->query($sql, array($conf_general_key_google, $conf_horario_feriado, $conf_horario_laboral, $conf_atencion_desde1, $conf_atencion_hasta1, $conf_atencion_desde2, $conf_atencion_hasta2, $conf_atencion_dias, $conf_rekognition, $conf_rekognition_key, $conf_rekognition_secret, $conf_rekognition_region, $conf_rekognition_similarity, $conf_rekognition_texto_fallo, $conf_img_width_max, $conf_img_width_min, $conf_img_height_max, $conf_img_height_min, $conf_img_peso, $conf_doc_validacion1, $conf_doc_validacion2, $conf_texto_respuesta, $conf_onboarding_correo, $conf_onboarding_docs, 
                 
@@ -5180,11 +5168,6 @@ class Mfunciones_logica extends CI_Model {
                 $conf_sms_permitido_txt_error,
 
                 $conf_credit_nro_uri,
-                $conf_credit_client_id,
-                $conf_credit_type,
-                $conf_credit_scope,
-                $conf_credit_user,
-                $conf_credit_password,
 
                 $nombre_usuario, $fecha_actual, $conf_credenciales_id));
                 $_SESSION["session_informacion"]["ad_active"] = $conf_ad_activo;

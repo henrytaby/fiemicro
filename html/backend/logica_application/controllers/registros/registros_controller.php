@@ -8550,12 +8550,6 @@ class Registros_controller extends CI_Controller {
         $api_credit = array();
         $api_credit["conf_credit_nro_uri"] = $arrConf["conf_credit_nro_uri"];
 
-        $api_credit["conf_credit_client_id"] = $arrConf["conf_credit_client_id"];
-        $api_credit["conf_credit_type"] = $arrConf["conf_credit_type"];
-        $api_credit["conf_credit_scope"] = $arrConf["conf_credit_scope"];
-        $api_credit["conf_credit_user"] = $arrConf["conf_credit_user"];
-        $api_credit["conf_credit_password"] = $arrConf["conf_credit_password"];
-
         /**
          * Variables recibidas para realizar las operaciones
          */

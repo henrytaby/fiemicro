@@ -147,13 +147,7 @@ class Conf_general_controller extends MY_Controller {
                     "conf_sms_permitido_txt_error" => $value["conf_sms_permitido_txt_error"],
 
                     // Consulta numero de credito
-                    "conf_credit_autentication_uri" => $value["conf_credit_autentication_uri"],
-                    "conf_credit_nro_uri" => $value["conf_credit_nro_uri"],
-                    "conf_credit_client_id" => $value["conf_credit_client_id"],
-                    "conf_credit_type" => $value["conf_credit_type"],
-                    "conf_credit_scope" => $value["conf_credit_scope"],
-                    "conf_credit_user" => $value["conf_credit_user"],
-                    "conf_credit_password" => $value["conf_credit_password"]
+                    "conf_credit_nro_uri" => $value["conf_credit_nro_uri"]
                 );
                 $lst_resultado[$i] = $item_valor;
 
@@ -338,25 +332,6 @@ class Conf_general_controller extends MY_Controller {
         $conf_credit_nro_uri = $this->input->post('conf_credit_nro_uri', TRUE);
         $conf_credit_nro_uri = str_replace(' ', '', $conf_credit_nro_uri);
 
-        //$conf_credit_autentication_uri = $this->input->post('conf_credit_autentication_uri', TRUE);
-        //$conf_credit_autentication_uri = str_replace(' ', '', $conf_credit_autentication_uri);
-
-        $conf_credit_client_id = $this->input->post('conf_credit_client_id', TRUE);
-        $conf_credit_client_id = str_replace(' ', '', $conf_credit_client_id);
-
-        $conf_credit_type = $this->input->post('conf_credit_type', TRUE);
-        $conf_credit_type = str_replace(' ', '', $conf_credit_type);
-
-        $conf_credit_scope = $this->input->post('conf_credit_scope', TRUE);
-        $conf_credit_scope = str_replace(' ', '', $conf_credit_scope);
-
-        $conf_credit_user = $this->input->post('conf_credit_user', TRUE);
-        $conf_credit_user = str_replace(' ', '', $conf_credit_user);
-
-        $conf_credit_password = $this->input->post('conf_credit_password', TRUE);
-        $conf_credit_password = str_replace(' ', '', $conf_credit_password);
-        
-        
         $nombre_usuario = $_SESSION["session_informacion"]["login"];
         $fecha_actual = date('Y-m-d H:i:s');
         
@@ -695,29 +670,11 @@ class Conf_general_controller extends MY_Controller {
         }
 
         //consulta de numero de credito
-        if($conf_credit_client_id == '')
-        {
-            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_client_id'));
-            exit();
-        }
         if($conf_credit_nro_uri == '')
         {
             js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_nro_uri'));
             exit();
         }
-
-
-        if($conf_credit_user == '')
-        {
-            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_user'));
-            exit();
-        }
-        if($conf_credit_password == '')
-        {
-            js_error_div_javascript('Debe registrar ' . $this->lang->line('conf_credit_password'));
-            exit();
-        }
-
 
         // Tiempo validéz del SMS no puede ser mayor al tiempo de validéz del token
         
@@ -845,13 +802,7 @@ class Conf_general_controller extends MY_Controller {
                 //consulta de numero de tramite
 
                 $conf_credit_nro_uri,
-                $conf_credit_client_id,
-                $conf_credit_type,
-                $conf_credit_scope,
-                $conf_credit_user,
-                $conf_credit_password,
 
-                
                 $fecha_actual, $nombre_usuario, $conf_general_id);
 
         $this->ConfForm_general_Ver();
@@ -882,13 +833,7 @@ class Conf_general_controller extends MY_Controller {
         $conf_sms_name_plantilla = $this->input->post('conf_sms_name_plantilla', TRUE);
         $conf_sms_channelid = (int)$this->input->post('conf_sms_channelid', TRUE);
 
-
         $conf_credit_nro_uri = $this->input->post('conf_credit_nro_uri', TRUE);
-        $conf_credit_client_id = $this->input->post('conf_credit_client_id', TRUE);
-        $conf_credit_type = $this->input->post('conf_credit_type', TRUE);
-        $conf_credit_scope = $this->input->post('conf_credit_scope', TRUE);
-        $conf_credit_user = $this->input->post('conf_credit_user', TRUE);
-        $conf_credit_password = $this->input->post('conf_credit_password', TRUE);
 
         if($conf_jwt_client_secret == '' || $conf_jwt_username == '' || $conf_jwt_password == '' || $conf_f_cobis_header == '')
         {
