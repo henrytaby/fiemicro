@@ -8558,40 +8558,51 @@ class Registros_controller extends CI_Controller {
         $creditOperation = $this->input->get('creditOperation', TRUE);
 
         if($id!="" && $customerDocumentNumber!="" && $creditOperation!=""){
-            $parametros = array(
-                "creditOperation" => (int)$creditOperation,
-                "customerDocumentNumber" => (int)$customerDocumentNumber,
-                "id" => (int)$id
-            );
-
             $respapi = array();
             $res = array();
             /**
-             *
-             * Añadir código para autentificación y get de token
-             */
-
-            /**
              * recuperar token
              */
-            $token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIwb1Q2Nm5kaUlKZklLNy1Nbk50cFlJQmpPYnVhdWlweExGbDJHdUhIeHFzIn0.eyJleHAiOjE2NzM2MzQ5MTQsImlhdCI6MTY3MzYzNDYxNCwianRpIjoiY2JlNzJkNWMtMTZkNy00YWQxLThmZTItY2MxZWQyNWMyNzhiIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLWtleWNsb2FrLWRldi5hcHBzLmRlc2FjbHVzdGVyLmJhbmNvZmllbGFiLmNvbS5iby9hdXRoL3JlYWxtcy9maWVkaWdpdGFsY3JlZGl0IiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIzNjNiMTIxLWZlNmYtNGQ3ZC05NTQwLTYzNjA2ODU0NTI1ZiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImRjLXVzZXItY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6ImZlMDc1ODhjLTc3Y2EtNDYxMy1iMmYwLWY2MThhZjk0ZTY0MyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLWZpZWRpZ2l0YWxjcmVkaXQiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJmZTA3NTg4Yy03N2NhLTQ2MTMtYjJmMC1mNjE4YWY5NGU2NDMiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGN1c2VyIn0.EViexk-6kFUUzwaQU09zJ8CImcLCv8Yp2TddIjT14fGUcAnIC73aDZBMBzsxdmR79e3tU5JrDwTPdGZC67cae90joq7iA7rifOI_oixPRDcBo4Bcg4dipNYFYN--mWHqxpk6PG5bpzP4CU6bys0ywDmroE-4VsYdB08m0_AhPQCWFuJhlnf92XV7wcD7-aTI3KimXUK7RFPNT2z_bpWcknm0ZG9EhtSAbv7fH8inM6_Ydfywfaonx20uNvZIfM3S8NTNmWBK1Yb4KPycimOL2aSFmkFhNDx_YmHIPxek6Y8j2nHydm-FxcZr43BelLVHSdcMQTQY55ASX20QbEOJYw";
-            $accion_usuario = $_SESSION["session_informacion"]["login"];
-            $codigo_usuario = $_SESSION["session_informacion"]["codigo"];
+            //$accion_usuario = $_SESSION["session_informacion"]["login"];
+            //$codigo_usuario = $_SESSION["session_informacion"]["codigo"];
+
+            $end_point = $api_credit["conf_credit_nro_uri"];
+
+            $parametros = array(
+                "creditOperation" => (int)$creditOperation,
+                "customerDocumentNumber" => (int)$customerDocumentNumber,
+                "id" => $id
+            );
+            /*
+            $parametros=array();
+            $parametros["creditOperation"] = "10008585117";
+            $parametros["customerDocumentNumber"] = "6706213";
+            $parametros["id"] = "6074862LP";
+            */
             $accion_fecha = date('Y-m-d H:i:s');
+            $request_get = 0;
+            $generate_token = 0;
+            $conf_f_cobis_header='';
 
-            $resultado_soa_fie = $this->mfunciones_generales->Cliente_SOA_FIE_Generico(
-                $token
-                , $api_credit["conf_credit_nro_uri"]
+            $resultado_soa_fie = $this->mfunciones_generales->Cliente_SOA_FIE_COBIS(
+                ''
+                , ''
+                , $end_point
                 , $parametros
-                , $accion_usuario
-                , $accion_fecha);
-
+                , 'testing...'
+                , $accion_fecha
+                , $request_get
+                , 1
+                , $generate_token
+                , $conf_f_cobis_header
+            );
             $res["ws_httpcode"]=$resultado_soa_fie->ws_httpcode;
+
 
             /**
              * Forzar el codigo, borrar para produccion
              */
-            $resultado_soa_fie->ws_httpcode = 200;
+            //$resultado_soa_fie->ws_httpcode = 200;
             //$resultado_soa_fie->ws_httpcode = 404;
 
             if($resultado_soa_fie->ws_httpcode==200){
@@ -8599,36 +8610,27 @@ class Registros_controller extends CI_Controller {
                 /**
                  * arreglo para pruebas
                  */
+                /* /
                 $respapi["transactionId"] = "nostrud in";
                 $respapi["result"] = array(
-                    "disbursedAmount" => rand(10000,20000),
+                    "disbursedAmount" => rand(100000,200000),
                     "message" => "La operación N pertenece al cliente con CI X en la APP. En el CORE pertenece al cliente Y con CI Z.",
                     "typeMessage" => "INFO"
                 );
                 $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
+                /**/
                 /**
                  * para produccion
                  */
-                //$respapi = $resultado_soa_fie->ws_result;
-
+                $respapi = $resultado_soa_fie->ws_result;
+                //$respapi = $resultado_soa_fie;
             }else if($resultado_soa_fie->ws_httpcode==500){
                 $respuesta =  3;
             }else{
                 $respuesta =  0;
             }
-            /*
-            echo "<pre>";
-            print_r($resultado_soa_fie->ws_httpcode);
-            print_r($resultado_soa_fie);
-            echo "</pre>";
-            exit;
-            */
             //$respuesta = 3;
-
-            $res["customerDocumentNumber"] = $customerDocumentNumber;
-            $res["id"] = $id;
-            $res["creditOperation"] = $creditOperation;
-
+            $res["parametros"] = $parametros;
             switch ($respuesta){
                 case 1:
                     $res["res"] = $respuesta;
@@ -8648,14 +8650,11 @@ class Registros_controller extends CI_Controller {
                     $res["msg"] = "[Error] - Error desconocido";
                     break;
             }
-
         }else{
             $res["res"] = 1;
             $res["msg"] = "[Error] - Error desconocido";
         }
-
         $arr = json_encode($res);
-
         return $this->output
             ->set_content_type('application/json')
             ->set_status_header(200)

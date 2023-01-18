@@ -156,7 +156,13 @@
     function check_credit_validation(codigo_operacion) {
         let baseUri = '/Registros/Principal/jsonope';
         let documento_del_cliente = <?php echo $arrRespuesta[0]['prospecto_id']?>;
-        let id_del_cliente =  <?php echo $arrRespuesta[0]['general_ci'] . $arrRespuesta[0]['general_ci_extension']?>;
+        <?PHP
+        $ext = trim($arrRespuesta[0]['general_ci']).$this->mfunciones_generales->GetValorCatalogo($arrRespuesta[0]['general_ci_extension'], 'extension_ci');
+        $ext = str_replace(".","",$ext);
+        $ext = str_replace(" ","",$ext);
+        ?>
+
+        let id_del_cliente =  '<?php echo $ext?>';
 
         $.ajax({
             url: `${baseUri}`,
@@ -172,15 +178,21 @@
                 $("#jdamonto").removeClass("jdamonto-on");
                 $("#jdamonto").removeClass("jdamonto-erro");
 
-                let numero = response.respapi.result.disbursedAmount;
-                if (numero == ""){
-                    numero =0;
+                let numero =0;
+                if(
+                    typeof response.respapi !== 'undefined'
+                    && typeof response.respapi.result !== 'undefined'
+                    && typeof response.respapi.result.disbursedAmount !== 'undefined'
+                ){
+                    numero = parseInt(response.respapi.result.disbursedAmount);
                 }
+                //console.log("Numero total: "+numero);
 
                 if(response.res==1 && numero > 0){
-                    let monto1 = new Intl.NumberFormat('en-US',{  }).format(response.respapi.result.disbursedAmount);
-                    $('#prospecto_desembolso_monto').val(response.respapi.result.disbursedAmount);
-                    $('#jdamonto').html(monto1);
+                    let monto1 = numero;
+                    monto1 = monto1/100;
+                    $('#prospecto_desembolso_monto').val(monto1);
+                    $('#jdamonto').html(new Intl.NumberFormat('en-US',{  }).format(monto1));
 
                     $("#jdamonto").addClass("jdamonto-on");
                     $("#registro_num_proceso_button").show();
