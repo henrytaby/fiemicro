@@ -1309,13 +1309,13 @@ class Registros_controller extends CI_Controller {
     }
     
     public function VistaInicio() {
-        
+
         $this->lang->load('general', 'castellano');
         $this->load->model('mfunciones_generales');
         $this->load->model('mfunciones_logica');
-        
+
         $estructura_id = $this->input->post('estructura_id', TRUE);
-        
+
         // Paso 1: Se pregunta si el prospecto depende de otro
         
         $arrConsulta = $this->mfunciones_logica->GetProspectoDepende($estructura_id);
@@ -8557,20 +8557,25 @@ class Registros_controller extends CI_Controller {
         $customerDocumentNumber = $this->input->get('customerDocumentNumber', TRUE);
         $creditOperation = $this->input->get('creditOperation', TRUE);
 
-        if($id!="" && $customerDocumentNumber!="" && $creditOperation!=""){
+        if($customerDocumentNumber!="" && $creditOperation!=""){
             $respapi = array();
             $res = array();
             /**
-             * recuperar token
+             * recuperar datos del usuario en curso, y activar la sessión
              */
-            //$accion_usuario = $_SESSION["session_informacion"]["login"];
-            //$codigo_usuario = $_SESSION["session_informacion"]["codigo"];
+            if (!isset($_SESSION)) {
+                session_start();
+            }
 
+            $sql = "SELECT CONCAT(usuario_nombres, ' ', usuario_app, ' ', usuario_apm) AS nombre_completo,usuario_email, usuario_id, usuario_user FROM usuarios WHERE usuario_id = ? ";
+            $consulta = $this->db->query($sql, array($_SESSION["session_informacion"]["codigo"]));
+            $listaResultados = $consulta->result_array();
+
+            $id = $listaResultados[0]["usuario_email"];
             $end_point = $api_credit["conf_credit_nro_uri"];
-
             $parametros = array(
-                "creditOperation" => (int)$creditOperation,
-                "customerDocumentNumber" => (int)$customerDocumentNumber,
+                "creditOperation" => $creditOperation,
+                "customerDocumentNumber" => $customerDocumentNumber,
                 "id" => $id
             );
             /*
@@ -8597,8 +8602,6 @@ class Registros_controller extends CI_Controller {
                 , $conf_f_cobis_header
             );
             $res["ws_httpcode"]=$resultado_soa_fie->ws_httpcode;
-
-
             /**
              * Forzar el codigo, borrar para produccion
              */
@@ -8610,24 +8613,40 @@ class Registros_controller extends CI_Controller {
                 /**
                  * arreglo para pruebas
                  */
-                /* /
+
+                /*
                 $respapi["transactionId"] = "nostrud in";
                 $respapi["result"] = array(
                     "disbursedAmount" => rand(100000,200000),
-                    "message" => "La operación N pertenece al cliente con CI X en la APP. En el CORE pertenece al cliente Y con CI Z.",
+                  */
+                    /*/
+                    "message" => "null",
+                    "typeMessage" => "null"
+                    /**/
+                    /*/
+                    "message" => "La operación 10008585117 pertenece al cliente con CI 67062136 en la APP. En el CORE pertenece al cliente MARIA YESVI CASTRO HERNANDEZ con CI 6706213.",
                     "typeMessage" => "INFO"
+                    /**/
+                    /*/
+                    "message" => "No existe un usuario con el Documento 60748624LP",
+                    "typeMessage" => "BLOCK"
+                    /**/
+                /*
                 );
                 $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
-                /**/
+                */
+
                 /**
                  * para produccion
                  */
                 $respapi = $resultado_soa_fie->ws_result;
-                //$respapi = $resultado_soa_fie;
+                /**
+                 * Verificamos errores de datos
+                 */
             }else if($resultado_soa_fie->ws_httpcode==500){
-                $respuesta =  3;
+                $respuesta =  2;
             }else{
-                $respuesta =  0;
+                $respuesta =  3;
             }
             //$respuesta = 3;
             $res["parametros"] = $parametros;
@@ -8639,15 +8658,11 @@ class Registros_controller extends CI_Controller {
                     break;
                 case 2:
                     $res["res"] = 2;
-                    $res["msg"] = "[Error] - No se encuentra datos para el número de operación";
-                    break;
-                case 3:
-                    $res["res"] = 3;
-                    $res["msg"] = "[Error] - Ocurrió un error la momento de realizar la consulta";
+                    $res["msg"] = "[500] - No se puede conectar al servicio API";
                     break;
                 default:
-                    $res["res"] = 0;
-                    $res["msg"] = "[Error] - Error desconocido";
+                    $res["res"] = 3;
+                    $res["msg"] = "[ERROR] - Ocurrio un problema :".$resultado_soa_fie->ws_httpcode;
                     break;
             }
         }else{

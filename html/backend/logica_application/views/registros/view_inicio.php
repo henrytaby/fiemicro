@@ -37,20 +37,20 @@
         $("#jdamonto").removeClass("jdamonto-on");
         $('#prospecto_desembolso_monto').val(0);
 
+
+        $("#msg-error").html("");
+        $("#jdamonto").html("0.00");
+        $("#msg-error").hide();
+
+
         if(!( /[^0-9]/.test( valor ) || valor.length != <?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>))
         {
             check_credit_validation(valor);
             $('#registro_num_proceso_button').prop('disabled', false);
-            
-            $('#registro_num_proceso_label_error').hide();
-            $('#registro_num_proceso_label_ok').show();
         }
         else
         {
             $('#registro_num_proceso_button').prop('disabled', true);
-            
-            $('#registro_num_proceso_label_ok').hide();
-            $('#registro_num_proceso_label_error').show();
         }
     }
 
@@ -155,21 +155,20 @@
 
     function check_credit_validation(codigo_operacion) {
         let baseUri = '/Registros/Principal/jsonope';
-        let documento_del_cliente = <?php echo $arrRespuesta[0]['prospecto_id']?>;
         <?PHP
+        //$ext = trim($arrRespuesta[0]['general_ci']);
         $ext = trim($arrRespuesta[0]['general_ci']).$this->mfunciones_generales->GetValorCatalogo($arrRespuesta[0]['general_ci_extension'], 'extension_ci');
         $ext = str_replace(".","",$ext);
         $ext = str_replace(" ","",$ext);
         ?>
-
-        let id_del_cliente =  '<?php echo $ext?>';
+        $("#msg-error").hide();
+        let documento_del_cliente =  '<?php echo $ext?>';
 
         $.ajax({
             url: `${baseUri}`,
             type: 'get',
             data: {
                 customerDocumentNumber: documento_del_cliente,
-                id: id_del_cliente,
                 creditOperation: codigo_operacion,
             },
             dataType: 'json',
@@ -188,23 +187,72 @@
                 }
                 //console.log("Numero total: "+numero);
 
-                if(response.res==1 && numero > 0){
-                    let monto1 = numero;
-                    monto1 = monto1/100;
-                    $('#prospecto_desembolso_monto').val(monto1);
-                    $('#jdamonto').html(new Intl.NumberFormat('en-US',{  }).format(monto1));
+                if(response.res==1){
+                    let errorval = 0;
+                    let errormsg = "";
 
-                    $("#jdamonto").addClass("jdamonto-on");
-                    $("#registro_num_proceso_button").show();
+                    let typeMessage = "BLOCK";
+                    if(typeof response.respapi !== 'undefined'
+                        && typeof response.respapi.result !== 'undefined'
+                        && typeof response.respapi.result.typeMessage !== 'undefined'){
+                        typeMessage = response.respapi.result.typeMessage;
+                        errormsg = response.respapi.result.message;
+                    }else{
+                        errormsg = "Error no definido";
+                    }
 
+                    if(typeMessage =="BLOCK"){
+                        //errormsg = response.respapi.result.message;
+                        errorval=1;
+                        $('#jdamonto').html("");
+                    }else if(typeMessage =="INFO"){
+                        //errormsg = response.respapi.result.message;
+                        errorval=1;
+
+                        let monto1 = numero;
+                        monto1 = monto1/100;
+                        $('#jdamonto').html(new Intl.NumberFormat('en-US',{ minimumFractionDigits: 2 }).format(monto1));
+                        $("#jdamonto").addClass("jdamonto-off");
+                    }else{
+                        if(numero > 0){
+                            let monto1 = numero;
+                            monto1 = monto1/100;
+                            $('#prospecto_desembolso_monto').val(monto1);
+                            $('#jdamonto').html(new Intl.NumberFormat ('en-US',{ minimumFractionDigits: 2 }).format(monto1));
+
+                            $("#jdamonto").addClass("jdamonto-on");
+                            $("#registro_num_proceso_button").show();
+                        }else{
+                            errorval=1;
+                            errormsg = "El monto recuperado es 0 y/o se optuvo un error desconocido :"+response.respapi.message;
+                            $("#registro_num_proceso_button").hide();
+                        }
+                    }
+
+                    /**
+                     * mostrar error
+                     */
+                    if(errorval==1){
+                        $("#msg-error").html(errormsg);
+                        $("#msg-error").show();
+                        $('#prospecto_desembolso_monto').val('0');
+                        $("#registro_num_proceso_button").hide();
+                    }else{
+                        $("#msg-error").html("");
+                        $("#msg-error").hide();
+                    }
                 }else if(response.res==2){
-                    $('#prospecto_desembolso_monto').val();
-                    $('#jdamonto').html("Número de Operación Inválida");
-                    $("#jdamonto").addClass("jdamonto-erro");
+                    console.log(response.msg);
+                    $("#msg-error").html(response.msg);
+                    $("#msg-error").show();
+                    $('#prospecto_desembolso_monto').val('0');
+                    $('#jdamonto').html("");
                     $("#registro_num_proceso_button").hide();
                 }else{
-                    $('#jdamonto').html("Ocurrio un problema al momento de realizar la consulta.");
-                    $("#jdamonto").addClass("jdamonto-erro");
+                    $("#msg-error").html(response.msg);
+                    $("#msg-error").show();
+                    $('#prospecto_desembolso_monto').val('0');
+                    $('#jdamonto').html("");
                     $("#registro_num_proceso_button").hide();
                 }
             }
@@ -216,6 +264,7 @@
         var iniciar = function(){
             //$("#prospecto_desembolso_monto").attr('type','hidden');
             $("#registro_num_proceso_button").hide();
+            $("#msg-error").hide();
         };
         return {
             init: function() {
@@ -803,6 +852,11 @@ if($arrRespuesta[0]['onboarding'] == 0)
                                 <div id="jdamonto" class="jdamonto-off">
                                     <?PHP echo number_format($arrRespuesta[0]['prospecto_desembolso_monto'], 2, '.', ',');?>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div id="msg-error" class="jdamonto-erro">ss</div>
                             </td>
                         </tr>
                     </table>
