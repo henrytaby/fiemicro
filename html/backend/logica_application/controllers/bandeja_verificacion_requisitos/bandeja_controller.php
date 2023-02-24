@@ -293,29 +293,17 @@ class Bandeja_controller extends MY_Controller {
         $this->lang->load('general', 'castellano');
         $this->load->model('mfunciones_generales');
         $this->load->model('mfunciones_logica');
+        $this->load->model('mfunciones_microcreditos');
         $this->load->library('FormularioValidaciones/logica_general/Formulario_logica_general');
 
         $this->formulario_logica_general->DefinicionValidacionFormulario();
 
-
-        /**
-         * Falta codigo de recuperacion de cutomerDocumentNumber y creditOperation
-         *
-         */
-
-
+/*
         $res = $this->JdaJsonOperacion('4406332CB','48888488488');
         echo "<pre>";
-        print_r($res);exit;
+        print_r($arrProspecto);exit;
         echo "</pre>";
-
-        /**
-         * Falta codigo de actualizacion
-         */
-
-        /**
-         * -----------------------------------------------------------------
-         */
+*/
 
         // 0=Insert    1=Update
 
@@ -333,8 +321,23 @@ class Bandeja_controller extends MY_Controller {
             case 6:
 
                 // Solicitud de Crédito
-                $this->load->model('mfunciones_microcreditos');
 
+                $arrProspecto = $this->mfunciones_microcreditos->BandejaSupervisionLeads(-1, ' AND sc.sol_id=' . $codigo);
+                
+                // ACTUALIZAR desembolso COBIS 23/02/2023 ------------------------------------------------------
+                if ($arrProspecto[0]['sol_num_proceso'] !="" && $arrProspecto[0]['sol_num_proceso']!='0' && $arrProspecto[0]['sol_jda_eval']!=1) {
+                    $ci_ext = trim($arrProspecto[0]['sol_ci']).$arrProspecto[0]['sol_extension'];
+        
+                    // obtener valor de cobis
+                    $result = $this->JdaJsonOperacion($ci_ext, $arrProspecto[0]['sol_num_proceso']);
+                    $monto = floatval($result['respapi']['result']['disbursedAmount']);
+                    $monto = $monto/100;
+        
+                    // actualizar
+                    if ($monto != null) {
+                        $resultado = $this->mfunciones_microcreditos->ActualizarDesembolsoCobis($codigo, $monto, 'sol_cre');
+                    } 
+                } 
                 $arrProspecto = $this->mfunciones_microcreditos->BandejaSupervisionLeads(-1, ' AND sc.sol_id=' . $codigo);
 
                 if (!isset($arrProspecto[0]))
@@ -362,6 +365,26 @@ class Bandeja_controller extends MY_Controller {
                 // Datos del Prospecto
                 $arrProspecto = $this->mfunciones_logica->ObtenerInfoProspecto($codigo);
                 $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrProspecto);
+
+                // ACTUALIZAR desembolso COBIS 23/02/2023 ------------------------------------------------------
+                if ($arrProspecto[0]['prospecto_num_proceso'] !="" && $arrProspecto[0]['prospecto_num_proceso']!='0' && $arrProspecto[0]['prospecto_jda_eval']!=1) {
+                    $ci_ext = trim($arrResultado[0]['general_ci']).$this->mfunciones_generales->GetValorCatalogo($arrProspecto[0]['general_ci_extension'], 'extension_ci');
+                    $ci_ext = str_replace(".","",$ci_ext); $ci_ext = str_replace(" ","",$ci_ext);
+        
+                    // obtener valor de cobis
+                    $result = $this->JdaJsonOperacion($ci_ext, $arrProspecto[0]['prospecto_num_proceso']);
+                    $monto = floatval($result['respapi']['result']['disbursedAmount']);
+                    $monto = $monto/100;
+        
+                    // actualizar
+                    if ($monto != null) {
+                        $resultado = $this->mfunciones_microcreditos->ActualizarDesembolsoCobis($codigo, $monto, 'prospecto');
+                    } 
+                } 
+                $arrProspecto = $this->mfunciones_logica->ObtenerInfoProspecto($codigo);
+                $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrProspecto);
+
+
 
                 $arrProspecto[0]['registro_num_proceso'] = $arrProspecto[0]['prospecto_num_proceso'];
 

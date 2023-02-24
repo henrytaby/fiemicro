@@ -44,13 +44,13 @@ class Mfunciones_microcreditos extends CI_Model {
         {
             switch($tipo) {
                 case 'sol_cre':
-                    $sql1 = "UPDATE solicitud_credito SET sol_desembolso_monto=$monto WHERE sol_id=$estructura_id; ";
-                    $consulta1 = $this->db->query($sql1, array());
+                    $sql1 = "UPDATE solicitud_credito SET sol_desembolso_monto=? WHERE sol_id=?; ";
+                    $consulta1 = $this->db->query($sql1, array($monto, $estructura_id));
                     break;
                     
                 case 'prospecto':
-                    $sql1 = "UPDATE prospecto SET prospecto_desembolso_monto=$monto WHERE prospecto_id=$estructura_id; ";
-                    $consulta1 = $this->db->query($sql1, array());
+                    $sql1 = "UPDATE prospecto SET prospecto_desembolso_monto=? WHERE prospecto_id=?; ";
+                    $consulta1 = $this->db->query($sql1, array($monto, $estructura_id));
                     break;
             }
         } 
@@ -5278,7 +5278,6 @@ class Mfunciones_microcreditos extends CI_Model {
             
             $sql = "UPDATE solicitud_credito SET
                 
-                        sol_num_proceso=?,
                         sol_jda_eval=?,
                         sol_jda_eval_texto=?,
                         sol_jda_eval_usuario=?,
@@ -5288,7 +5287,7 @@ class Mfunciones_microcreditos extends CI_Model {
                         
                     WHERE sol_id = ?";
 
-            $this->db->query($sql, array($registro_num_proceso, $sol_jda_eval, $sol_jda_eval_texto, $sol_jda_eval_usuario, $accion_fecha, $accion_usuario, $accion_fecha, $codigo_sol));
+            $this->db->query($sql, array( $sol_jda_eval, $sol_jda_eval_texto, $sol_jda_eval_usuario, $accion_fecha, $accion_usuario, $accion_fecha, $codigo_sol));
 
             return TRUE;
         } 

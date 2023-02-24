@@ -29,9 +29,12 @@
         check_registro_num_proceso();
     });
 
-    $('#registro_num_proceso').on('keyup change', function(){
+    $('#registro_num_proceso').on('keyup', function(){
         check_registro_num_proceso();
     });
+    /* $('#registro_num_proceso').on('keyup change', function(){
+        check_registro_num_proceso();
+    }); */
     
     function check_registro_num_proceso()
     {

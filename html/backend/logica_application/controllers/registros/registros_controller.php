@@ -1335,7 +1335,6 @@ class Registros_controller extends CI_Controller {
         $arrResultado = $this->mfunciones_logica->select_info_dependencia($estructura_id);
         $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrResultado);
 
-
         // ACTUALIZAR desembolso COBIS 23/02/2023 ------------------------------------------------------
         if ($arrResultado[0]['prospecto_num_proceso'] !="" && $arrResultado[0]['prospecto_num_proceso']!='0') {
             $ci_ext = trim($arrResultado[0]['general_ci']).$this->mfunciones_generales->GetValorCatalogo($arrResultado[0]['general_ci_extension'], 'extension_ci');
@@ -1344,11 +1343,15 @@ class Registros_controller extends CI_Controller {
             // obtener valor de cobis
             $result = $this->JdaJsonOperacionMethod($ci_ext, $arrResultado[0]['prospecto_num_proceso']);
             $monto = floatval($result['respapi']['result']['disbursedAmount']);
+            $monto = $monto/100;
 
-            //$data["arrRespuesta"][0] = array('monto_actualizado_cobis' => $monto);
             // actualizar
-            $resultado = $this->mfunciones_microcreditos->ActualizarDesembolsoCobis($estructura_id, $monto, 'prospecto');
+            if ($monto != null) {
+                $resultado = $this->mfunciones_microcreditos->ActualizarDesembolsoCobis($estructura_id, $monto, 'prospecto');
+            }
         }
+        $arrResultado = $this->mfunciones_logica->select_info_dependencia($estructura_id);
+        $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrResultado);
 
         if (isset($arrResultado[0])) 
         {
@@ -1426,21 +1429,21 @@ class Registros_controller extends CI_Controller {
         
         $arrResultado = $this->mfunciones_microcreditos->DatosSolicitudCreditoEmail($estructura_id);
 
-
         // ACTUALIZAR desembolso COBIS 23/02/2023 ------------------------------------------------------
         if ($arrResultado[0]['registro_num_proceso'] !="" && $arrResultado[0]['registro_num_proceso']!='0') {
-            $ci_ext = trim($arrRespuesta[0]['sol_ci']).$arrRespuesta[0]['sol_extension'];
+            $ci_ext = trim($arrResultado[0]['sol_ci']).$arrResultado[0]['sol_extension'];
 
             // obtener valor de cobis
             $result = $this->JdaJsonOperacionMethod($ci_ext, $arrResultado[0]['registro_num_proceso']);
             $monto = floatval($result['respapi']['result']['disbursedAmount']);
+            $monto = $monto/100;
             
-            $arrResultado[0]['JdaJsonOperacionMethod'] = $result;
-
-            //$data["arrRespuesta"][0] = array('monto_actualizado_cobis' => $monto);
             // actualizar
-            $resultado = $this->mfunciones_microcreditos->ActualizarDesembolsoCobis($estructura_id, $monto, 'sol_cre');
+            if ($monto != null ) {
+                $resultado = $this->mfunciones_microcreditos->ActualizarDesembolsoCobis($estructura_id, $monto, 'sol_cre');
+            }
         }
+        $arrResultado = $this->mfunciones_microcreditos->DatosSolicitudCreditoEmail($estructura_id);
 
         
         if (!isset($arrResultado[0])) 
@@ -8572,8 +8575,7 @@ class Registros_controller extends CI_Controller {
     }
 
     // -- Verificar el número de operación
-
-    public function JdaJsonOperacionMethod($customerDocumentNumber, $creditOperation, $id="") {
+    public function JdaJsonOperacionMethod($customerDocumentNumber,$creditOperation){
         $this->lang->load('general', 'castellano');
         $this->load->model('mfunciones_generales');
         $this->load->model('mfunciones_logica');
@@ -8586,6 +8588,13 @@ class Registros_controller extends CI_Controller {
 
         $api_credit = array();
         $api_credit["conf_credit_nro_uri"] = $arrConf["conf_credit_nro_uri"];
+
+        /**
+         * Variables recibidas para realizar las operaciones
+         */
+        $id = $this->input->get('id', TRUE);
+        //$customerDocumentNumber = $this->input->get('customerDocumentNumber', TRUE);
+        //$creditOperation = $this->input->get('creditOperation', TRUE);
 
         if($customerDocumentNumber!="" && $creditOperation!=""){
             $respapi = array();
@@ -8644,11 +8653,11 @@ class Registros_controller extends CI_Controller {
                  * arreglo para pruebas
                  */
 
-                
+
                 $respapi["transactionId"] = "nostrud in";
                 $respapi["result"] = array(
                     "disbursedAmount" => rand(100000,200000),
-                  
+
                     /**/
                     "message" => "null",
                     "typeMessage" => "null"
@@ -8661,10 +8670,10 @@ class Registros_controller extends CI_Controller {
                     "message" => "No existe un usuario con el Documento 60748624LP",
                     "typeMessage" => "BLOCK"
                     /**/
-                
+
                 );
                 $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
-                
+
 
                 /**
                  * para produccion
@@ -8672,7 +8681,7 @@ class Registros_controller extends CI_Controller {
 
 
 
-                    // comentada ------------------------
+                // comentada ------------------------
                 //$respapi = $resultado_soa_fie->ws_result;
                 /**
                  * Verificamos errores de datos
@@ -8703,7 +8712,13 @@ class Registros_controller extends CI_Controller {
             $res["res"] = 1;
             $res["msg"] = "[Error] - Error desconocido";
         }
-
+        /*
+        $arr = json_encode($res);
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(200)
+            ->set_output($arr);
+        */
         return $res;
     }
 
