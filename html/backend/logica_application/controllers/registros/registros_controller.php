@@ -8644,7 +8644,7 @@ class Registros_controller extends CI_Controller {
             /**
              * Forzar el codigo, borrar para produccion
              */
-            $resultado_soa_fie->ws_httpcode = 200;
+            //$resultado_soa_fie->ws_httpcode = 200;
             //$resultado_soa_fie->ws_httpcode = 404;
 
             if($resultado_soa_fie->ws_httpcode==200){
@@ -8653,12 +8653,12 @@ class Registros_controller extends CI_Controller {
                  * arreglo para pruebas
                  */
 
-
+                /*
                 $respapi["transactionId"] = "nostrud in";
                 $respapi["result"] = array(
                     "disbursedAmount" => rand(100000,200000),
-
-                    /**/
+                */
+                    /*/
                     "message" => "null",
                     "typeMessage" => "null"
                     /**/
@@ -8670,19 +8670,18 @@ class Registros_controller extends CI_Controller {
                     "message" => "No existe un usuario con el Documento 60748624LP",
                     "typeMessage" => "BLOCK"
                     /**/
-
+                /*
                 );
                 $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
-
+                */
 
                 /**
                  * para produccion
                  */
 
-
-
-                // comentada ------------------------
-                //$respapi = $resultado_soa_fie->ws_result;
+                /**/
+                $respapi = $resultado_soa_fie->ws_result;
+                /**/
                 /**
                  * Verificamos errores de datos
                  */
@@ -8791,7 +8790,7 @@ class Registros_controller extends CI_Controller {
             /**
              * Forzar el codigo, borrar para produccion
              */
-            $resultado_soa_fie->ws_httpcode = 200;
+            //$resultado_soa_fie->ws_httpcode = 200;
             //$resultado_soa_fie->ws_httpcode = 404;
 
             if($resultado_soa_fie->ws_httpcode==200){
@@ -8800,12 +8799,12 @@ class Registros_controller extends CI_Controller {
                  * arreglo para pruebas
                  */
 
-                
+                /*
                 $respapi["transactionId"] = "nostrud in";
                 $respapi["result"] = array(
                     "disbursedAmount" => rand(100000,200000),
-                  
-                    /**/
+                  */
+                    /*/
                     "message" => "null",
                     "typeMessage" => "null"
                     /**/
@@ -8817,19 +8816,18 @@ class Registros_controller extends CI_Controller {
                     "message" => "No existe un usuario con el Documento 60748624LP",
                     "typeMessage" => "BLOCK"
                     /**/
-                
+                /*/
                 );
                 $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
-                
+                /**/
 
                 /**
                  * para produccion
                  */
 
-
-
-                    // comentada ------------------------
-                //$respapi = $resultado_soa_fie->ws_result;
+                /**/
+                $respapi = $resultado_soa_fie->ws_result;
+                /**/
                 /**
                  * Verificamos errores de datos
                  */
