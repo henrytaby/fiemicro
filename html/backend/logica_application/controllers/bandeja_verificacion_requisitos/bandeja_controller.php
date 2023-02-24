@@ -140,6 +140,154 @@ class Bandeja_controller extends MY_Controller {
         $this->load->view('bandeja_verificacion_requisitos/view_bandeja_ver', $data);
     }
 
+
+    public function JdaJsonOperacion($customerDocumentNumber,$creditOperation){
+        $this->lang->load('general', 'castellano');
+        $this->load->model('mfunciones_generales');
+        $this->load->model('mfunciones_logica');
+
+        /**
+         * Conseguimos las configuraciones general
+         */
+        $arrConf = $this->mfunciones_logica->ObtenerDatosConf_General();
+        $arrConf = $arrConf[0];
+
+        $api_credit = array();
+        $api_credit["conf_credit_nro_uri"] = $arrConf["conf_credit_nro_uri"];
+
+        /**
+         * Variables recibidas para realizar las operaciones
+         */
+        $id = $this->input->get('id', TRUE);
+        //$customerDocumentNumber = $this->input->get('customerDocumentNumber', TRUE);
+        //$creditOperation = $this->input->get('creditOperation', TRUE);
+
+        if($customerDocumentNumber!="" && $creditOperation!=""){
+            $respapi = array();
+            $res = array();
+            /**
+             * recuperar datos del usuario en curso, y activar la sessión
+             */
+            if (!isset($_SESSION)) {
+                session_start();
+            }
+
+            $sql = "SELECT CONCAT(usuario_nombres, ' ', usuario_app, ' ', usuario_apm) AS nombre_completo,usuario_email, usuario_id, usuario_user FROM usuarios WHERE usuario_id = ? ";
+            $consulta = $this->db->query($sql, array($_SESSION["session_informacion"]["codigo"]));
+            $listaResultados = $consulta->result_array();
+
+            $id = $listaResultados[0]["usuario_email"];
+            $end_point = $api_credit["conf_credit_nro_uri"];
+            $parametros = array(
+                "creditOperation" => $creditOperation,
+                "customerDocumentNumber" => $customerDocumentNumber,
+                "id" => $id
+            );
+            /*
+            $parametros=array();
+            $parametros["creditOperation"] = "10008585117";
+            $parametros["customerDocumentNumber"] = "6706213";
+            $parametros["id"] = "6074862LP";
+            */
+            $accion_fecha = date('Y-m-d H:i:s');
+            $request_get = 0;
+            $generate_token = 0;
+            $conf_f_cobis_header='';
+
+            $resultado_soa_fie = $this->mfunciones_generales->Cliente_SOA_FIE_COBIS(
+                ''
+                , ''
+                , $end_point
+                , $parametros
+                , 'testing...'
+                , $accion_fecha
+                , $request_get
+                , 1
+                , $generate_token
+                , $conf_f_cobis_header
+            );
+            $res["ws_httpcode"]=$resultado_soa_fie->ws_httpcode;
+            /**
+             * Forzar el codigo, borrar para produccion
+             */
+            $resultado_soa_fie->ws_httpcode = 200;
+            //$resultado_soa_fie->ws_httpcode = 404;
+
+            if($resultado_soa_fie->ws_httpcode==200){
+                $respuesta =  1;
+                /**
+                 * arreglo para pruebas
+                 */
+
+
+                $respapi["transactionId"] = "nostrud in";
+                $respapi["result"] = array(
+                    "disbursedAmount" => rand(100000,200000),
+
+                    /**/
+                    "message" => "null",
+                    "typeMessage" => "null"
+                    /**/
+                    /*/
+                    "message" => "La operación 10008585117 pertenece al cliente con CI 67062136 en la APP. En el CORE pertenece al cliente MARIA YESVI CASTRO HERNANDEZ con CI 6706213.",
+                    "typeMessage" => "INFO"
+                    /**/
+                    /*/
+                    "message" => "No existe un usuario con el Documento 60748624LP",
+                    "typeMessage" => "BLOCK"
+                    /**/
+
+                );
+                $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
+
+
+                /**
+                 * para produccion
+                 */
+
+
+
+                // comentada ------------------------
+                //$respapi = $resultado_soa_fie->ws_result;
+                /**
+                 * Verificamos errores de datos
+                 */
+            }else if($resultado_soa_fie->ws_httpcode==500){
+                $respuesta =  2;
+            }else{
+                $respuesta =  3;
+            }
+            //$respuesta = 3;
+            $res["parametros"] = $parametros;
+            switch ($respuesta){
+                case 1:
+                    $res["res"] = $respuesta;
+                    $res["msg"] = "ok";
+                    $res["respapi"]=$respapi;
+                    break;
+                case 2:
+                    $res["res"] = 2;
+                    $res["msg"] = "[500] - No se puede conectar al servicio API";
+                    break;
+                default:
+                    $res["res"] = 3;
+                    $res["msg"] = "[ERROR] - Ocurrio un problema :".$resultado_soa_fie->ws_httpcode;
+                    break;
+            }
+        }else{
+            $res["res"] = 1;
+            $res["msg"] = "[Error] - Error desconocido";
+        }
+        /*
+        $arr = json_encode($res);
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(200)
+            ->set_output($arr);
+        */
+        return $res;
+    }
+
     public function JDA_Evaluacion() {
 
         $this->lang->load('general', 'castellano');
@@ -148,6 +296,26 @@ class Bandeja_controller extends MY_Controller {
         $this->load->library('FormularioValidaciones/logica_general/Formulario_logica_general');
 
         $this->formulario_logica_general->DefinicionValidacionFormulario();
+
+
+        /**
+         * Falta codigo de recuperacion de cutomerDocumentNumber y creditOperation
+         *
+         */
+
+
+        $res = $this->JdaJsonOperacion('4406332CB','48888488488');
+        echo "<pre>";
+        print_r($res);exit;
+        echo "</pre>";
+
+        /**
+         * Falta codigo de actualizacion
+         */
+
+        /**
+         * -----------------------------------------------------------------
+         */
 
         // 0=Insert    1=Update
 
@@ -441,132 +609,7 @@ class Bandeja_controller extends MY_Controller {
         $this->Bandeja_Ver();
     }
 
-    public function JdaJsonOperacion(){
-        $this->lang->load('general', 'castellano');
-        $this->load->model('mfunciones_generales');
-        $this->load->model('mfunciones_logica');
 
-        /**
-         * Conseguimos las configuraciones general
-         */
-        $arrConf = $this->mfunciones_logica->ObtenerDatosConf_General();
-        $arrConf = $arrConf[0];
-
-        $api_credit = array();
-        $api_credit["conf_credit_nro_uri"] = $arrConf["conf_credit_nro_uri"];
-
-        /**
-         * Variables recibidas para realizar las operaciones
-         */
-        $id = $this->input->get('id', TRUE);
-        $customerDocumentNumber = $this->input->get('customerDocumentNumber', TRUE);
-        $creditOperation = $this->input->get('creditOperation', TRUE);
-
-        if($id!="" && $customerDocumentNumber!="" && $creditOperation!=""){
-            $parametros = array(
-                "creditOperation" => (int)$creditOperation,
-                "customerDocumentNumber" => (int)$customerDocumentNumber,
-                "id" => (int)$id
-            );
-
-            $respapi = array();
-            $res = array();
-            /**
-             *
-             * Añadir código para autentificación y get de token
-             */
-
-            /**
-             * recuperar token
-             */
-
-            $token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIwb1Q2Nm5kaUlKZklLNy1Nbk50cFlJQmpPYnVhdWlweExGbDJHdUhIeHFzIn0.eyJleHAiOjE2NzM2MzQ5MTQsImlhdCI6MTY3MzYzNDYxNCwianRpIjoiY2JlNzJkNWMtMTZkNy00YWQxLThmZTItY2MxZWQyNWMyNzhiIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLWtleWNsb2FrLWRldi5hcHBzLmRlc2FjbHVzdGVyLmJhbmNvZmllbGFiLmNvbS5iby9hdXRoL3JlYWxtcy9maWVkaWdpdGFsY3JlZGl0IiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImIzNjNiMTIxLWZlNmYtNGQ3ZC05NTQwLTYzNjA2ODU0NTI1ZiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImRjLXVzZXItY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6ImZlMDc1ODhjLTc3Y2EtNDYxMy1iMmYwLWY2MThhZjk0ZTY0MyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLWZpZWRpZ2l0YWxjcmVkaXQiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJmZTA3NTg4Yy03N2NhLTQ2MTMtYjJmMC1mNjE4YWY5NGU2NDMiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGN1c2VyIn0.EViexk-6kFUUzwaQU09zJ8CImcLCv8Yp2TddIjT14fGUcAnIC73aDZBMBzsxdmR79e3tU5JrDwTPdGZC67cae90joq7iA7rifOI_oixPRDcBo4Bcg4dipNYFYN--mWHqxpk6PG5bpzP4CU6bys0ywDmroE-4VsYdB08m0_AhPQCWFuJhlnf92XV7wcD7-aTI3KimXUK7RFPNT2z_bpWcknm0ZG9EhtSAbv7fH8inM6_Ydfywfaonx20uNvZIfM3S8NTNmWBK1Yb4KPycimOL2aSFmkFhNDx_YmHIPxek6Y8j2nHydm-FxcZr43BelLVHSdcMQTQY55ASX20QbEOJYw";
-            $accion_usuario = $_SESSION["session_informacion"]["login"];
-            $codigo_usuario = $_SESSION["session_informacion"]["codigo"];
-            $accion_fecha = date('Y-m-d H:i:s');
-
-            $resultado_soa_fie = $this->mfunciones_generales->Cliente_SOA_FIE_Generico(
-                $token
-                , $api_credit["conf_credit_nro_uri"]
-                , $parametros
-                , $accion_usuario
-                , $accion_fecha);
-
-            $res["ws_httpcode"]=$resultado_soa_fie->ws_httpcode;
-
-            /**
-             * Forzar el codigo, borrar para produccion
-             */
-            $resultado_soa_fie->ws_httpcode = 200;
-            //$resultado_soa_fie->ws_httpcode = 404;
-
-            if($resultado_soa_fie->ws_httpcode==200){
-                $respuesta =  1;
-                /**
-                 * arreglo para pruebas
-                 */
-                $respapi["transactionId"] = "nostrud in";
-                $respapi["result"] = array(
-                    "disbursedAmount" => rand(10000,20000),
-                    "message" => "La operación N pertenece al cliente con CI X en la APP. En el CORE pertenece al cliente Y con CI Z.",
-                    "typeMessage" => "INFO"
-                );
-                $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
-                /**
-                 * para produccion
-                 */
-                //$respapi = $resultado_soa_fie->ws_result;
-
-            }else if($resultado_soa_fie->ws_httpcode==500){
-                $respuesta =  3;
-            }else{
-                $respuesta =  0;
-            }
-            /*
-            echo "<pre>";
-            print_r($resultado_soa_fie->ws_httpcode);
-            print_r($resultado_soa_fie);
-            echo "</pre>";
-            exit;
-            */
-            //$respuesta = 3;
-
-            $res["customerDocumentNumber"] = $customerDocumentNumber;
-            $res["id"] = $id;
-            $res["creditOperation"] = $creditOperation;
-
-            switch ($respuesta){
-                case 1:
-                    $res["res"] = $respuesta;
-                    $res["msg"] = "ok";
-                    $res["respapi"]=$respapi;
-                    break;
-                case 2:
-                    $res["res"] = 2;
-                    $res["msg"] = "[Error] - No se encuentra datos para el número de operación";
-                    break;
-                case 3:
-                    $res["res"] = 3;
-                    $res["msg"] = "[Error] - Ocurrió un error la momento de realizar la consulta";
-                    break;
-                default:
-                    $res["res"] = 0;
-                    $res["msg"] = "[Error] - Error desconocido";
-                    break;
-            }
-
-        }else{
-            $res["res"] = 1;
-            $res["msg"] = "[Error] - Error desconocido";
-        }
-
-        $arr = json_encode($res);
-
-        return $this->output
-            ->set_content_type('application/json')
-            ->set_status_header(200)
-            ->set_output($arr);
-    }
 
     public function DesembCOBISForm() {
 
