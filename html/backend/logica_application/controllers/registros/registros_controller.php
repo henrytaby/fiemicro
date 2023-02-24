@@ -880,6 +880,8 @@ class Registros_controller extends CI_Controller {
                     'sol_con_geolocalizacion_img' => $value['sol_con_geolocalizacion_img'],
                     'sol_con_geolocalizacion_dom_img' => $value['sol_con_geolocalizacion_dom_img'],
                     
+                    
+                    'sol_desembolso_monto' => $value['sol_desembolso_monto'],
                 );
                 $lst_resultado[$i] = $item_valor;
                 
@@ -1313,8 +1315,11 @@ class Registros_controller extends CI_Controller {
         $this->lang->load('general', 'castellano');
         $this->load->model('mfunciones_generales');
         $this->load->model('mfunciones_logica');
+        $this->load->model('mfunciones_microcreditos');
 
         $estructura_id = $this->input->post('estructura_id', TRUE);
+
+        
 
         // Paso 1: Se pregunta si el prospecto depende de otro
         
@@ -1329,6 +1334,21 @@ class Registros_controller extends CI_Controller {
         // Listado de información del Prospecto y sus dependencias
         $arrResultado = $this->mfunciones_logica->select_info_dependencia($estructura_id);
         $this->mfunciones_generales->Verificar_ConvertirArray_Hacia_Matriz($arrResultado);
+
+
+        // ACTUALIZAR desembolso COBIS 23/02/2023 ------------------------------------------------------
+        if ($arrResultado[0]['prospecto_num_proceso'] !="" && $arrResultado[0]['prospecto_num_proceso']!='0') {
+            $ci_ext = trim($arrResultado[0]['general_ci']).$this->mfunciones_generales->GetValorCatalogo($arrResultado[0]['general_ci_extension'], 'extension_ci');
+            $ci_ext = str_replace(".","",$ci_ext); $ci_ext = str_replace(" ","",$ci_ext);
+
+            // obtener valor de cobis
+            $result = $this->JdaJsonOperacionMethod($ci_ext, $arrResultado[0]['prospecto_num_proceso']);
+            $monto = floatval($result['respapi']['result']['disbursedAmount']);
+
+            //$data["arrRespuesta"][0] = array('monto_actualizado_cobis' => $monto);
+            // actualizar
+            $resultado = $this->mfunciones_microcreditos->ActualizarDesembolsoCobis($estructura_id, $monto, 'prospecto');
+        }
 
         if (isset($arrResultado[0])) 
         {
@@ -1405,13 +1425,30 @@ class Registros_controller extends CI_Controller {
         $estructura_id = $this->input->post('estructura_id', TRUE);
         
         $arrResultado = $this->mfunciones_microcreditos->DatosSolicitudCreditoEmail($estructura_id);
+
+
+        // ACTUALIZAR desembolso COBIS 23/02/2023 ------------------------------------------------------
+        if ($arrResultado[0]['registro_num_proceso'] !="" && $arrResultado[0]['registro_num_proceso']!='0') {
+            $ci_ext = trim($arrRespuesta[0]['sol_ci']).$arrRespuesta[0]['sol_extension'];
+
+            // obtener valor de cobis
+            $result = $this->JdaJsonOperacionMethod($ci_ext, $arrResultado[0]['registro_num_proceso']);
+            $monto = floatval($result['respapi']['result']['disbursedAmount']);
+            
+            $arrResultado[0]['JdaJsonOperacionMethod'] = $result;
+
+            //$data["arrRespuesta"][0] = array('monto_actualizado_cobis' => $monto);
+            // actualizar
+            $resultado = $this->mfunciones_microcreditos->ActualizarDesembolsoCobis($estructura_id, $monto, 'sol_cre');
+        }
+
         
         if (!isset($arrResultado[0])) 
         {
             js_error_div_javascript($this->lang->line('NoAutorizado'));
             exit();
         }
-        
+
         // Validar que el ejecutvio ya TENGA ese perfil, si ya lo tiene asignado mostrar mensaje al usuario | 2=Categoría B
         if($this->mfunciones_microcreditos->CheckTipoPerfilEjecutivo($arrResultado[0]["ejecutivo_id"], 2))
         {
@@ -8536,6 +8573,140 @@ class Registros_controller extends CI_Controller {
 
     // -- Verificar el número de operación
 
+    public function JdaJsonOperacionMethod($customerDocumentNumber, $creditOperation, $id="") {
+        $this->lang->load('general', 'castellano');
+        $this->load->model('mfunciones_generales');
+        $this->load->model('mfunciones_logica');
+
+        /**
+         * Conseguimos las configuraciones general
+         */
+        $arrConf = $this->mfunciones_logica->ObtenerDatosConf_General();
+        $arrConf = $arrConf[0];
+
+        $api_credit = array();
+        $api_credit["conf_credit_nro_uri"] = $arrConf["conf_credit_nro_uri"];
+
+        if($customerDocumentNumber!="" && $creditOperation!=""){
+            $respapi = array();
+            $res = array();
+            /**
+             * recuperar datos del usuario en curso, y activar la sessión
+             */
+            if (!isset($_SESSION)) {
+                session_start();
+            }
+
+            $sql = "SELECT CONCAT(usuario_nombres, ' ', usuario_app, ' ', usuario_apm) AS nombre_completo,usuario_email, usuario_id, usuario_user FROM usuarios WHERE usuario_id = ? ";
+            $consulta = $this->db->query($sql, array($_SESSION["session_informacion"]["codigo"]));
+            $listaResultados = $consulta->result_array();
+
+            $id = $listaResultados[0]["usuario_email"];
+            $end_point = $api_credit["conf_credit_nro_uri"];
+            $parametros = array(
+                "creditOperation" => $creditOperation,
+                "customerDocumentNumber" => $customerDocumentNumber,
+                "id" => $id
+            );
+            /*
+            $parametros=array();
+            $parametros["creditOperation"] = "10008585117";
+            $parametros["customerDocumentNumber"] = "6706213";
+            $parametros["id"] = "6074862LP";
+            */
+            $accion_fecha = date('Y-m-d H:i:s');
+            $request_get = 0;
+            $generate_token = 0;
+            $conf_f_cobis_header='';
+
+            $resultado_soa_fie = $this->mfunciones_generales->Cliente_SOA_FIE_COBIS(
+                ''
+                , ''
+                , $end_point
+                , $parametros
+                , 'testing...'
+                , $accion_fecha
+                , $request_get
+                , 1
+                , $generate_token
+                , $conf_f_cobis_header
+            );
+            $res["ws_httpcode"]=$resultado_soa_fie->ws_httpcode;
+            /**
+             * Forzar el codigo, borrar para produccion
+             */
+            $resultado_soa_fie->ws_httpcode = 200;
+            //$resultado_soa_fie->ws_httpcode = 404;
+
+            if($resultado_soa_fie->ws_httpcode==200){
+                $respuesta =  1;
+                /**
+                 * arreglo para pruebas
+                 */
+
+                
+                $respapi["transactionId"] = "nostrud in";
+                $respapi["result"] = array(
+                    "disbursedAmount" => rand(100000,200000),
+                  
+                    /**/
+                    "message" => "null",
+                    "typeMessage" => "null"
+                    /**/
+                    /*/
+                    "message" => "La operación 10008585117 pertenece al cliente con CI 67062136 en la APP. En el CORE pertenece al cliente MARIA YESVI CASTRO HERNANDEZ con CI 6706213.",
+                    "typeMessage" => "INFO"
+                    /**/
+                    /*/
+                    "message" => "No existe un usuario con el Documento 60748624LP",
+                    "typeMessage" => "BLOCK"
+                    /**/
+                
+                );
+                $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
+                
+
+                /**
+                 * para produccion
+                 */
+
+
+
+                    // comentada ------------------------
+                //$respapi = $resultado_soa_fie->ws_result;
+                /**
+                 * Verificamos errores de datos
+                 */
+            }else if($resultado_soa_fie->ws_httpcode==500){
+                $respuesta =  2;
+            }else{
+                $respuesta =  3;
+            }
+            //$respuesta = 3;
+            $res["parametros"] = $parametros;
+            switch ($respuesta){
+                case 1:
+                    $res["res"] = $respuesta;
+                    $res["msg"] = "ok";
+                    $res["respapi"]=$respapi;
+                    break;
+                case 2:
+                    $res["res"] = 2;
+                    $res["msg"] = "[500] - No se puede conectar al servicio API";
+                    break;
+                default:
+                    $res["res"] = 3;
+                    $res["msg"] = "[ERROR] - Ocurrio un problema :".$resultado_soa_fie->ws_httpcode;
+                    break;
+            }
+        }else{
+            $res["res"] = 1;
+            $res["msg"] = "[Error] - Error desconocido";
+        }
+
+        return $res;
+    }
+
     public function JdaJsonOperacion(){
         $this->lang->load('general', 'castellano');
         $this->load->model('mfunciones_generales');
@@ -8605,7 +8776,7 @@ class Registros_controller extends CI_Controller {
             /**
              * Forzar el codigo, borrar para produccion
              */
-            //$resultado_soa_fie->ws_httpcode = 200;
+            $resultado_soa_fie->ws_httpcode = 200;
             //$resultado_soa_fie->ws_httpcode = 404;
 
             if($resultado_soa_fie->ws_httpcode==200){
@@ -8614,12 +8785,12 @@ class Registros_controller extends CI_Controller {
                  * arreglo para pruebas
                  */
 
-                /*
+                
                 $respapi["transactionId"] = "nostrud in";
                 $respapi["result"] = array(
                     "disbursedAmount" => rand(100000,200000),
-                  */
-                    /*/
+                  
+                    /**/
                     "message" => "null",
                     "typeMessage" => "null"
                     /**/
@@ -8631,15 +8802,19 @@ class Registros_controller extends CI_Controller {
                     "message" => "No existe un usuario con el Documento 60748624LP",
                     "typeMessage" => "BLOCK"
                     /**/
-                /*
+                
                 );
                 $respapi["timestamp"] = "1952-10-07T11:34:58.220Z";
-                */
+                
 
                 /**
                  * para produccion
                  */
-                $respapi = $resultado_soa_fie->ws_result;
+
+
+
+                    // comentada ------------------------
+                //$respapi = $resultado_soa_fie->ws_result;
                 /**
                  * Verificamos errores de datos
                  */

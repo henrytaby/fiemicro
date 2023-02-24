@@ -37,6 +37,30 @@ class Mfunciones_microcreditos extends CI_Model {
             }
         }
     }
+
+    function ActualizarDesembolsoCobis($estructura_id, $monto, $tipo='')
+    {
+        try 
+        {
+            switch($tipo) {
+                case 'sol_cre':
+                    $sql1 = "UPDATE solicitud_credito SET sol_desembolso_monto=$monto WHERE sol_id=$estructura_id; ";
+                    $consulta1 = $this->db->query($sql1, array());
+                    break;
+                    
+                case 'prospecto':
+                    $sql1 = "UPDATE prospecto SET prospecto_desembolso_monto=$monto WHERE prospecto_id=$estructura_id; ";
+                    $consulta1 = $this->db->query($sql1, array());
+                    break;
+            }
+        } 
+        catch (Exception $e) 
+        {
+            js_error_div_javascript($e . "<span style='font-size:3.5mm;'>
+                Ocurrio un evento inesperado, intentelo mas tarde.</span>");
+            exit();
+        }
+    }
     
     function DatosSolicitudCreditoEmail($codigo_solicitud)
     {
@@ -177,6 +201,7 @@ class Mfunciones_microcreditos extends CI_Model {
                     "sol_indepen_ant_ano_sec" => $value["sol_indepen_ant_ano_sec"],
                     "sol_indepen_ant_mes_sec" => $value["sol_indepen_ant_mes_sec"],
                     
+                    "sol_desembolso_monto" => $value["sol_desembolso_monto"],
                 );
                 $lst_resultado[$i] = $item_valor;
                 
@@ -3096,7 +3121,7 @@ class Mfunciones_microcreditos extends CI_Model {
                 $condicion .= " AND s.codigo_agencia_fie IN ($lista_region)";
             }
             
-            $sql = "SELECT ejecutivo.ejecutivo_perfil_tipo, usuario_email AS agente_correo, usuarios.usuario_id AS agente_codigo, CONCAT_WS(' ', usuarios.usuario_nombres, usuarios.usuario_app, usuarios.usuario_apm) AS agente_nombre, usuarios.usuario_telefono, estructura_regional_nombre, estructura_regional_departamento, estructura_regional_provincia, estructura_regional_ciudad, s.* FROM solicitud_credito s 
+            $sql = "SELECT ejecutivo.ejecutivo_perfil_tipo, usuario_email AS agente_correo, usuarios.usuario_id AS agente_codigo, CONCAT_WS(' ', usuarios.usuario_nombres, usuarios.usuario_app, usuarios.usuario_apm) AS agente_nombre, usuarios.usuario_telefono, estructura_regional_nombre, estructura_regional_departamento, estructura_regional_provincia, estructura_regional_ciudad, sol_desembolso_monto, s.* FROM solicitud_credito s 
                     INNER JOIN ejecutivo ON ejecutivo.ejecutivo_id=s.ejecutivo_id INNER JOIN usuarios ON usuarios.usuario_id=ejecutivo.usuario_id
                     INNER JOIN estructura_agencia ON estructura_agencia.estructura_agencia_id=usuarios.estructura_agencia_id INNER JOIN estructura_regional ON estructura_regional.estructura_regional_id=estructura_agencia.estructura_regional_id
                     WHERE 1 " . $condicion . " ORDER BY s.sol_fecha DESC "; 
@@ -5340,7 +5365,7 @@ class Mfunciones_microcreditos extends CI_Model {
         {
             // Paso 1: Se busca el registro por la Llave y se captura el valor
             
-            $sql1 = "SELECT sc.sol_id, sc.sol_num_proceso, tp.tipo_persona_id, tp.tipo_persona_nombre, e.ejecutivo_id, e.usuario_id, CONCAT(u.usuario_nombres, ' ', u.usuario_app, ' ', u.usuario_apm) as 'ejecutivo_nombre', sc.sol_registro_completado_fecha, sc.sol_primer_nombre, sc.sol_segundo_nombre, sc.sol_primer_apellido, sc.sol_segundo_apellido, sc.sol_ci, sc.sol_complemento, sc.sol_extension, sc.sol_dependencia, sc.sol_depen_empresa, sc.sol_indepen_actividad, sc.sol_evaluacion, sc.sol_rechazado_texto, sc.sol_moneda, sc.sol_monto, sc.sol_detalle, sc.sol_consolidado_fecha, sc.sol_jda_eval, sc.sol_jda_eval_usuario, sc.sol_jda_eval_fecha, sc.sol_jda_eval_texto
+            $sql1 = "SELECT sc.sol_id, sc.sol_num_proceso, tp.tipo_persona_id, tp.tipo_persona_nombre, e.ejecutivo_id, sol_desembolso_monto AS prospecto_desembolso_monto, e.usuario_id, CONCAT(u.usuario_nombres, ' ', u.usuario_app, ' ', u.usuario_apm) as 'ejecutivo_nombre', sc.sol_registro_completado_fecha, sc.sol_primer_nombre, sc.sol_segundo_nombre, sc.sol_primer_apellido, sc.sol_segundo_apellido, sc.sol_ci, sc.sol_complemento, sc.sol_extension, sc.sol_dependencia, sc.sol_depen_empresa, sc.sol_indepen_actividad, sc.sol_evaluacion, sc.sol_rechazado_texto, sc.sol_moneda, sc.sol_monto, sc.sol_detalle, sc.sol_consolidado_fecha, sc.sol_jda_eval, sc.sol_jda_eval_usuario, sc.sol_jda_eval_fecha, sc.sol_jda_eval_texto
                     FROM solicitud_credito sc
                     INNER JOIN ejecutivo e ON e.ejecutivo_id=sc.ejecutivo_id
                     INNER JOIN usuarios u ON u.usuario_id=e.usuario_id
@@ -5400,8 +5425,8 @@ class Mfunciones_microcreditos extends CI_Model {
             }
             else
             {
-                $sql = "UPDATE solicitud_credito SET sol_num_proceso=?, accion_usuario=?, accion_fecha=? WHERE sol_id=? ";
-                $consulta = $this->db->query($sql, array((int)$numero_operacion, $accion_usuario, $accion_fecha, $codigo_registro));
+                $sql = "UPDATE solicitud_credito SET sol_num_proceso=?, accion_usuario=?, accion_fecha=?, sol_desembolso_monto=? WHERE sol_id=? ";
+                $consulta = $this->db->query($sql, array((int)$numero_operacion, $accion_usuario, $accion_fecha,$prospecto_desembolso_monto, $codigo_registro));
             }
 
         } 

@@ -4,6 +4,7 @@
     $vista_actual = $arrRespuesta[0]['sol_ultimo_paso'];
     $codigo_rubro = $arrRespuesta[0]['camp_id'];
     $codigo_evaluacion = $arrRespuesta[0]['sol_evaluacion'];
+    $prospecto_desembolso_monto = $arrRespuesta[0]['sol_desembolso_monto'];
 ?>
 
     $(document).ready(function(){ 
@@ -38,19 +39,31 @@
         
         valor = valor.toString();
         
+        /*cambio realizado 23/02/2023*/
+        $("#jdamonto").addClass("jdamonto-off");
+        $("#jdamonto").removeClass("jdamonto-on");
+        $('#prospecto_desembolso_monto').val(0);
+
+
+        $("#msg-error").html("");
+        $("#jdamonto").html("0.00");
+        $("#msg-error").hide();
+        /* fin cambio*/
+
         if(!( /[^0-9]/.test( valor ) || valor.length != <?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>))
         {
+            check_credit_validation(valor); // agregado 23/02/2023
             $('#registro_num_proceso_button').prop('disabled', false);
             
-            $('#registro_num_proceso_label_error').hide();
-            $('#registro_num_proceso_label_ok').show();
+            //$('#registro_num_proceso_label_error').hide(); // comentado 23/02/2023
+            //$('#registro_num_proceso_label_ok').show(); // comentado 23/02/2023
         }
         else
         {
             $('#registro_num_proceso_button').prop('disabled', true);
             
-            $('#registro_num_proceso_label_ok').hide();
-            $('#registro_num_proceso_label_error').show();
+            //$('#registro_num_proceso_label_ok').hide();  // comentado 23/02/2023
+            //$('#registro_num_proceso_label_error').show();  // comentado 23/02/2023
         }
     }
     
@@ -62,6 +75,113 @@
         $("#div_num_operacion").modal();
         
         check_registro_num_proceso();
+    }
+
+    // funcion agregada 23/02/2023
+    function check_credit_validation(codigo_operacion) {
+        let baseUri = '/Registros/Principal/jsonope';
+        <?PHP
+        //$ext = trim($arrRespuesta[0]['general_ci']);
+        $ext = trim($arrRespuesta[0]['sol_ci']).$arrRespuesta[0]['sol_extension'].'.';
+        $ext = str_replace(".","",$ext);
+        $ext = str_replace(" ","",$ext);
+        ?>
+        $("#msg-error").hide();
+        let documento_del_cliente =  '<?php echo $ext?>';
+
+        $.ajax({
+            url: `${baseUri}`,
+            type: 'get',
+            data: {
+                customerDocumentNumber: documento_del_cliente,
+                creditOperation: codigo_operacion,
+            },
+            dataType: 'json',
+            success: function (response) {
+                $("#jdamonto").removeClass("jdamonto-off");
+                $("#jdamonto").removeClass("jdamonto-on");
+                $("#jdamonto").removeClass("jdamonto-erro");
+
+                let numero =0;
+                if(
+                    typeof response.respapi !== 'undefined'
+                    && typeof response.respapi.result !== 'undefined'
+                    && typeof response.respapi.result.disbursedAmount !== 'undefined'
+                ){
+                    numero = parseInt(response.respapi.result.disbursedAmount);
+                }
+                //console.log("Numero total: "+numero);
+
+                if(response.res==1){
+                    let errorval = 0;
+                    let errormsg = "";
+
+                    let typeMessage = "BLOCK";
+                    if(typeof response.respapi !== 'undefined'
+                        && typeof response.respapi.result !== 'undefined'
+                        && typeof response.respapi.result.typeMessage !== 'undefined'){
+                        typeMessage = response.respapi.result.typeMessage;
+                        errormsg = response.respapi.result.message;
+                    }else{
+                        errormsg = "Error no definido";
+                    }
+
+                    if(typeMessage =="BLOCK"){
+                        //errormsg = response.respapi.result.message;
+                        errorval=1;
+                        $('#jdamonto').html("");
+                    }else if(typeMessage =="INFO"){
+                        //errormsg = response.respapi.result.message;
+                        errorval=1;
+
+                        let monto1 = numero;
+                        monto1 = monto1/100;
+                        $('#jdamonto').html(new Intl.NumberFormat('en-US',{ minimumFractionDigits: 2 }).format(monto1));
+                        $("#jdamonto").addClass("jdamonto-off");
+                    }else{
+                        if(numero > 0){
+                            let monto1 = numero;
+                            monto1 = monto1/100;
+                            $('#prospecto_desembolso_monto').val(monto1);
+                            $('#jdamonto').html(new Intl.NumberFormat ('en-US',{ minimumFractionDigits: 2 }).format(monto1));
+
+                            $("#jdamonto").addClass("jdamonto-on");
+                            $("#registro_num_proceso_button").show();
+                        }else{
+                            errorval=1;
+                            errormsg = "El monto recuperado es 0 y/o se optuvo un error desconocido :"+response.respapi.message;
+                            $("#registro_num_proceso_button").hide();
+                        }
+                    }
+
+                    /**
+                     * mostrar error
+                     */
+                    if(errorval==1){
+                        $("#msg-error").html(errormsg);
+                        $("#msg-error").show();
+                        $('#prospecto_desembolso_monto').val('0');
+                        $("#registro_num_proceso_button").hide();
+                    }else{
+                        $("#msg-error").html("");
+                        $("#msg-error").hide();
+                    }
+                }else if(response.res==2){
+                    console.log(response.msg);
+                    $("#msg-error").html(response.msg);
+                    $("#msg-error").show();
+                    $('#prospecto_desembolso_monto').val('0');
+                    $('#jdamonto').html("");
+                    $("#registro_num_proceso_button").hide();
+                }else{
+                    $("#msg-error").html(response.msg);
+                    $("#msg-error").show();
+                    $('#prospecto_desembolso_monto').val('0');
+                    $('#jdamonto').html("");
+                    $("#registro_num_proceso_button").hide();
+                }
+            }
+        });
     }
 
     function validateSelRubros()
@@ -129,6 +249,7 @@
         var sin_guardar = 1;
 
         var strParametros = "&estructura_id=" + estructura_id + "&codigo_rubro=" + codigo_rubro + "&vista_actual=" + vista_actual + "&home_ant_sig=" + home_ant_sig + "&sin_guardar=" + sin_guardar + "&tipo_registro=" + tipo_registro;
+        strParametros += "&prospecto_desembolso_monto="+$("#prospecto_desembolso_monto").val();
         Ajax_CargadoGeneralPagina("../Pasos/Guardar", "divContenidoGeneral", "divErrorBusqueda", "SIN_FOCUS", strParametros);
     }
     
@@ -317,6 +438,46 @@
     }
     
 </script>
+<style>
+    .jdamonto-on{
+        background-color: rgba(227, 253, 235, 1);
+        border: 1px solid #578b58;
+        color: rgba(60, 118, 61, 1);
+        padding: 6px;
+        text-align: right;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .jdamonto-off{
+        background-color: #f7f7f7;
+        border: 1px solid #a7a7a7;
+        color: #777777;
+        padding: 6px;
+        text-align: right;
+        font-size: 15px;
+        border-radius: 7px;
+    }
+    .jdamonto-erro{
+        background-color: #f8d7da;
+        border: 1px solid #dc3545;
+        color: #975057;
+        padding: 6px;
+        text-align: right;
+        font-size: 13px;
+        border-radius: 7px;
+    }
+    .resumen{
+        background-color: #fcf8e3;
+        border: 1px solid #b1a181;
+        width: 100%;
+        font-size: 15px !important;
+        color: #846d3e;
+        border-radius: 7px;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+</style>
 
     <?php
 
@@ -388,6 +549,20 @@
         <?php
         }
         ?>
+
+
+        <div class="row">
+            <div class="col" style="text-align: center;">
+                <?PHP if ($arrRespuesta[0]['registro_num_proceso'] !="" && $arrRespuesta[0]['registro_num_proceso']!='0') {?>
+                <div id="resumen" class="resumen">
+                    <strong>Número de Operación:</strong> <?PHP echo $arrRespuesta[0]['registro_num_proceso']?>
+                    <br>
+                    <strong>Monto :</strong> <?PHP echo number_format($arrRespuesta[0]['sol_desembolso_monto'], 2, '.', ',');?>
+                </div>
+                <?PHP }?>
+            </div>
+        </div>
+        <br />
         
         <div class="row">
             <div class="col" style="text-align: center;">
@@ -670,7 +845,31 @@ if($arrRespuesta[0]["sol_codigo_rubro"] >= 7)
                         <?php echo $this->lang->line('registro_num_proceso_label'); ?>
 
                     </label>
-                    <input style="width: 100%; height: 18px;" type="number" autocomplete="off" value="<?php echo $arrRespuesta[0]['registro_num_proceso']; ?>" id="registro_num_proceso" name="registro_num_proceso" maxlength="<?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>" title="" onkeydown="return (event.keyCode != 13);">
+                    <input style="width: 100%; height: 18px;" type="number" autocomplete="off" value="<?php echo $arrRespuesta[0]['registro_num_proceso']; ?>" 
+                            id="registro_num_proceso" name="registro_num_proceso" maxlength="<?php echo (int)$this->lang->line('registro_num_proceso_cantidad'); ?>" 
+                            title="" onkeydown="return (event.keyCode != 13);">
+
+                    <table class="tablaresultados Mayuscula" style="margin-top: 10px !important;width: 100% !important;" border="0">
+                        <?php //$strClase = $strClase == "FilaBlanca" ? "FilaGris" : "FilaBlanca"; ?>
+                        <tr class="<?php echo $strClase; ?>">
+                            <td style="width: 30%; font-weight: bold;">
+                                <?php echo $this->lang->line('prospecto_desembolso_monto'); ?>
+                            </td>
+
+                            <td style="width: 70%;">
+                                <?php //echo $arrCajasHTML["prospecto_desembolso_monto"]; ?>
+                                <input type="hidden" name="prospecto_desembolso_monto" id="prospecto_desembolso_monto" value="<?PHP echo $arrRespuesta[0]['sol_desembolso_monto']?>">
+                                <div id="jdamonto" class="jdamonto-off">
+                                    <?PHP echo number_format($arrRespuesta[0]['sol_desembolso_monto'], 2, '.', ',');?>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div id="msg-error" class="jdamonto-erro">ss</div>
+                            </td>
+                        </tr>
+                    </table>
 
                     <br /><br />
 
